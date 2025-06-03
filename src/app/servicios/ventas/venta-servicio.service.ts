@@ -15,9 +15,8 @@ import {
   providedIn: 'root'
 })
 export class VentaServicioService {
-  // Proxy para convertir HTTP a HTTPS
-  private proxyUrl: string = 'https://corsproxy.io/?'; // Opción más rápida
-  // private proxyUrl: string = 'https://api.allorigins.win/raw?url='; // Alternativa
+  // Proxy para solicitudes GET
+  private proxyUrl: string = 'https://api.allorigins.win/raw?url=';
 
   private webApi: string = environment.endpoint;
   private api: string = 'api/Venta';
@@ -31,7 +30,6 @@ export class VentaServicioService {
 
   constructor(private http: HttpClient) { }
 
-  // Métodos auxiliares
   private getProxiedUrl(endpoint: string): string {
     const fullUrl = `${this.webApi}${endpoint}`;
     return `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
@@ -49,10 +47,10 @@ export class VentaServicioService {
     return this.http.get<T>(proxiedUrl);
   }
 
-  // Métodos adaptados
+  // POST sin proxy (no compatible con AllOrigins)
   registrarVenta(compra: CompraRequest): Observable<any> {
     const url = `${this.webApi}${this.api}`;
-    return this.http.post(`${this.proxyUrl}${encodeURIComponent(url)}`, compra);
+    return this.http.post(url, compra);
   }
 
   obtenerDatos(): Observable<DatosVenta> {

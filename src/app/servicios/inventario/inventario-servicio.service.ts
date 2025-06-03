@@ -8,40 +8,52 @@ import { FormProducto, InformacionProducto, Inventario, MovimientoInventarioRequ
   providedIn: 'root'
 })
 export class InventarioServicioService {
-  // Proxy para convertir HTTP a HTTPS (alternativas disponibles)
-  private proxyUrl: string = 'https://corsproxy.io/?'; // Opción más rápida
-  // private proxyUrl: string = 'https://api.allorigins.win/raw?url='; // Alternativa
+  private proxyUrl: string = 'https://api.allorigins.win/raw?url=';
   private webApi: string = environment.endpoint;
-  private api: string = 'api/Inventario/'
-  private apiProducto: string = 'api/Producto/'
-  private apiMov: string = 'api/MovimientoInventario/'
-  private listadoProductos: string = 'listado-productos-compra'
-  private listadoProveedores: string = 'listado-proveedores'
-  private informacionProductos: string = 'informacion-producto'
-  private datosProducto: string = 'datos-producto'
-  private select: string = 'select-form'
-  private agregarProducto: string = 'Agregar-Producto'
-  private listadoInventario: string = 'listado-inventario'
-  private metodosPago: string = 'metodos-pago-compras'
+  private api: string = 'api/Inventario/';
+  private apiProducto: string = 'api/Producto/';
+  private apiMov: string = 'api/MovimientoInventario/';
+  private listadoProductos: string = 'listado-productos-compra';
+  private listadoProveedores: string = 'listado-proveedores';
+  private informacionProductos: string = 'informacion-producto';
+  private datosProducto: string = 'datos-producto';
+  private select: string = 'select-form';
+  private agregarProducto: string = 'Agregar-Producto';
+  private listadoInventario: string = 'listado-inventario';
+  private metodosPago: string = 'metodos-pago-compras';
 
   constructor(private http: HttpClient) { }
 
-  // Método auxiliar para crear URLs con proxy
   private getProxiedUrl(endpoint: string): string {
     const fullUrl = `${this.webApi}${endpoint}`;
     return `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
   }
 
-  // Método auxiliar para URLs con parámetros de consulta
   private getProxiedUrlWithParams(endpoint: string, params: string): string {
     const fullUrl = `${this.webApi}${endpoint}?${params}`;
     return `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
   }
 
+  // POST y PUT NO usan proxy (AllOrigins no los soporta)
   enviarMovimientoInventario(payload: MovimientoInventarioRequest): Observable<any> {
-    return this.http.post<any>(this.getProxiedUrl(this.apiMov), payload);
+    return this.http.post<any>(`${this.webApi}${this.apiMov}`, payload);
   }
 
+  crearProducto(productoAdd: ProductoAdd): Observable<any> {
+    return this.http.post<any>(
+      `${this.webApi}${this.apiProducto}${this.agregarProducto}`,
+      productoAdd
+    );
+  }
+
+  editarProductoConAuditoria(idProducto: number, producto: any, cambios: any[]) {
+    return this.http.put(`${this.webApi}${this.apiProducto}${idProducto}`, {
+      producto,
+      auditorias: cambios
+    });
+  }
+
+  // GET con proxy AllOrigins
   obtenerListadoInventario(): Observable<Inventario[]> {
     return this.http.get<Inventario[]>(this.getProxiedUrl(`${this.api}${this.listadoInventario}`));
   }
@@ -72,19 +84,5 @@ export class InventarioServicioService {
     const endpoint = `${this.apiProducto}${this.datosProducto}`;
     const params = `idPropietario=${idPropietario}&idProducto=${idProducto}`;
     return this.http.get<ProductoAdd>(this.getProxiedUrlWithParams(endpoint, params));
-  }
-
-  editarProductoConAuditoria(idProducto: number, producto: any, cambios: any[]) {
-    return this.http.put(this.getProxiedUrl(`${this.apiProducto}${idProducto}`), {
-      producto,
-      auditorias: cambios
-    });
-  }
-
-  crearProducto(productoAdd: ProductoAdd): Observable<any> {
-    return this.http.post<any>(
-      this.getProxiedUrl(`${this.apiProducto}${this.agregarProducto}`),
-      productoAdd
-    );
   }
 }

@@ -17,7 +17,7 @@ import { DetalleCompra, DetalleVenta } from '../../interfaces/detalles/detalle-v
   providedIn: 'root'
 })
 export class ReportesService {
-  private proxyUrl: string = 'https://corsproxy.io/?';
+  private proxyUrl: string = 'https://api.allorigins.win/raw?url=';
   private webApi: string = environment.endpoint;
   private api: string = 'api/Reportes';
 
@@ -27,7 +27,6 @@ export class ReportesService {
     return `${this.proxyUrl}${encodeURIComponent(`${this.webApi}${endpoint}`)}`;
   }
 
-  // Estadísticas
   obtenerReporte(): Observable<ReporteBack> {
     return this.http.get<ReporteBack>(this.proxiedUrl(`${this.api}/reporte`));
   }
@@ -42,7 +41,6 @@ export class ReportesService {
     return this.http.get<ReporteSemanal[]>(this.proxiedUrl(url));
   }
 
-  // Resumen
   obtenerReporteInventario(idPropietario: number): Observable<ReporteInventario[]> {
     const url = `${this.api}/reporte-inventario?idPropietario=${idPropietario}`;
     return this.http.get<ReporteInventario[]>(this.proxiedUrl(url));
@@ -57,7 +55,7 @@ export class ReportesService {
     if (fechaInicio) params = params.set('fechaInicio', fechaInicio.toISOString());
     if (fechaFin) params = params.set('fechaFin', fechaFin.toISOString());
     if (idMarca) params = params.set('idMarca', idMarca);
-    
+
     const fullUrl = `${this.webApi}${this.api}/reporte-productos?${params.toString()}`;
     return this.http.get<ProductoMasVendidoDto[]>(`${this.proxyUrl}${encodeURIComponent(fullUrl)}`);
   }
@@ -67,12 +65,11 @@ export class ReportesService {
     if (fechaInicio) params = params.set('fechaInicio', fechaInicio.toISOString());
     if (fechaFin) params = params.set('fechaFin', fechaFin.toISOString());
     if (idMarca) params = params.set('idMarca', idMarca);
-    
+
     const fullUrl = `${this.webApi}${this.api}/reporte-productos-comprados?${params.toString()}`;
     return this.http.get<ProductoMasVendidoDto[]>(`${this.proxyUrl}${encodeURIComponent(fullUrl)}`);
   }
 
-  // Listados info
   obtenerDetallesVenta(): Observable<DetalleVenta[]> {
     return this.http.get<DetalleVenta[]>(this.proxiedUrl(`${this.api}/detalle-ventas`));
   }
