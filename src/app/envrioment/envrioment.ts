@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
-    endpoint: 'http://www.inventarioapi.somee.com/api'
+    endpoint: 'http://www.inventarioapi.somee.com/'
   };
   
