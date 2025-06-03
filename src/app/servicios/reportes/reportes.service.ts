@@ -1,96 +1,96 @@
-import { MetodoPagoData, ProductoMasVendidoDto, ReporteInventario, ReporteSemanal, ResumenCierreCaja } from './../../interfaces/reportes/reporte-back';
+import {
+  MetodoPagoData,
+  ProductoMasVendidoDto,
+  ReporteInventario,
+  ReporteSemanal,
+  ResumenCierreCaja,
+  ReporteBack,
+  ReporteMensual
+} from './../../interfaces/reportes/reporte-back';
 import { Injectable } from '@angular/core';
 import { environment } from '../../envrioment/envrioment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ReporteBack, ReporteMensual } from '../../interfaces/reportes/reporte-back';
 import { DetalleCompra, DetalleVenta } from '../../interfaces/detalles/detalle-venta';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportesService {
+  private proxyUrl: string = 'https://corsproxy.io/?';
   private webApi: string = environment.endpoint;
-  private api: string = 'api/Reportes/'
-  private cierreCajaMensual: string = 'cierre-caja?'
-  //
-  private reportes: string = 'reporte'
-  private reporteMensual: string = 'reporte-meses'
-  private ReporteSemanalu: string = 'reporte-semanal'
-  //
-  private ReporteInventariou: string = 'reporte-inventario'
-  private ReporteProductos: string = 'reporte-productos'
-  private ReporteProductosComprados: string = 'reporte-productos-comprados'
-  private ObtenerMarca: string = 'api/Producto/obtener-marca'
-  //
-  private DetalleVentas: string = 'detalle-ventas'
-  private DetalleCompras: string = 'detalle-compras'
-  
-  private CierreCaja: string = 'cierre-de-caja-diario'
-  private EstadosCuenta: string = 'estados-de-cuenta'
-  constructor(private http: HttpClient) { }
-  //Estadisticas
-  obtenerReporte():Observable<ReporteBack> {
-    return this.http.get<ReporteBack>(`${this.webApi}${this.api}${this.reportes}`);
+  private api: string = 'api/Reportes';
+
+  constructor(private http: HttpClient) {}
+
+  private proxiedUrl(endpoint: string): string {
+    return `${this.proxyUrl}${encodeURIComponent(`${this.webApi}${endpoint}`)}`;
   }
-  obtenerReporteMensual(year: number):Observable<ReporteMensual[]>{
-    return this.http.get<ReporteMensual[]>(`${this.webApi}${this.api}${this.reporteMensual}?year=${year}`)
+
+  // Estadísticas
+  obtenerReporte(): Observable<ReporteBack> {
+    return this.http.get<ReporteBack>(this.proxiedUrl(`${this.api}/reporte`));
   }
-  obtenerReporteSemanal(year: number, mes: number):Observable<ReporteSemanal[]>{
-    return this.http.get<ReporteSemanal[]>(`${this.webApi}${this.api}${this.ReporteSemanalu}?year=${year}&mes=${mes}`)
+
+  obtenerReporteMensual(year: number): Observable<ReporteMensual[]> {
+    const url = `${this.api}/reporte-meses?year=${year}`;
+    return this.http.get<ReporteMensual[]>(this.proxiedUrl(url));
   }
-  //Resumen
-  obtenerReporteInventario(idPropietario: number):Observable<ReporteInventario[]>{
-    return this.http.get<ReporteInventario[]>(`${this.webApi}${this.api}${this.ReporteInventariou}?idPropietario=${idPropietario}`)
+
+  obtenerReporteSemanal(year: number, mes: number): Observable<ReporteSemanal[]> {
+    const url = `${this.api}/reporte-semanal?year=${year}&mes=${mes}`;
+    return this.http.get<ReporteSemanal[]>(this.proxiedUrl(url));
   }
+
+  // Resumen
+  obtenerReporteInventario(idPropietario: number): Observable<ReporteInventario[]> {
+    const url = `${this.api}/reporte-inventario?idPropietario=${idPropietario}`;
+    return this.http.get<ReporteInventario[]>(this.proxiedUrl(url));
+  }
+
   getMarcas(): Observable<{ id: number, nombre: string }[]> {
-    return this.http.get<{ id: number, nombre: string }[]>(`${this.webApi}${this.ObtenerMarca}`); // Ajusta la URL a tu API
+    return this.http.get<{ id: number, nombre: string }[]>(this.proxiedUrl('api/Producto/obtener-marca'));
   }
 
   getProductosMasVendidos(idMarca?: number, fechaInicio?: Date, fechaFin?: Date): Observable<ProductoMasVendidoDto[]> {
     let params = new HttpParams();
-    if (fechaInicio) {
-      params = params.set('fechaInicio', fechaInicio.toISOString());
-    }
-
-    if (fechaFin) {
-      params = params.set('fechaFin', fechaFin.toISOString());
-    }
-
-    if(idMarca){
-      params = params.set('idMarca', idMarca)
-    }
-    return this.http.get<ProductoMasVendidoDto[]>(`${this.webApi}${this.api}${this.ReporteProductos}`, { params });
+    if (fechaInicio) params = params.set('fechaInicio', fechaInicio.toISOString());
+    if (fechaFin) params = params.set('fechaFin', fechaFin.toISOString());
+    if (idMarca) params = params.set('idMarca', idMarca);
+    
+    const fullUrl = `${this.webApi}${this.api}/reporte-productos?${params.toString()}`;
+    return this.http.get<ProductoMasVendidoDto[]>(`${this.proxyUrl}${encodeURIComponent(fullUrl)}`);
   }
+
   getProductosMasComprado(idMarca?: number, fechaInicio?: Date, fechaFin?: Date): Observable<ProductoMasVendidoDto[]> {
     let params = new HttpParams();
-    if (fechaInicio) {
-      params = params.set('fechaInicio', fechaInicio.toISOString());
-    }
+    if (fechaInicio) params = params.set('fechaInicio', fechaInicio.toISOString());
+    if (fechaFin) params = params.set('fechaFin', fechaFin.toISOString());
+    if (idMarca) params = params.set('idMarca', idMarca);
+    
+    const fullUrl = `${this.webApi}${this.api}/reporte-productos-comprados?${params.toString()}`;
+    return this.http.get<ProductoMasVendidoDto[]>(`${this.proxyUrl}${encodeURIComponent(fullUrl)}`);
+  }
 
-    if (fechaFin) {
-      params = params.set('fechaFin', fechaFin.toISOString());
-    }
+  // Listados info
+  obtenerDetallesVenta(): Observable<DetalleVenta[]> {
+    return this.http.get<DetalleVenta[]>(this.proxiedUrl(`${this.api}/detalle-ventas`));
+  }
 
-    if(idMarca){
-      params = params.set('idMarca', idMarca)
-    }
-    return this.http.get<ProductoMasVendidoDto[]>(`${this.webApi}${this.api}${this.ReporteProductosComprados}`, { params });
+  obtenerDetallesCompras(): Observable<DetalleCompra[]> {
+    return this.http.get<DetalleCompra[]>(this.proxiedUrl(`${this.api}/detalle-compras`));
   }
-  //Listados info
-  obtenerDetallesVenta():Observable<DetalleVenta[]>{
-    return this.http.get<DetalleVenta[]>(`${this.webApi}${this.api}${this.DetalleVentas}`);
+
+  obtenerCierreDeCajaDiario(): Observable<ResumenCierreCaja> {
+    return this.http.get<ResumenCierreCaja>(this.proxiedUrl(`${this.api}/cierre-de-caja-diario`));
   }
-  obtenerDetallesCompras():Observable<DetalleCompra[]>{
-    return this.http.get<DetalleCompra[]>(`${this.webApi}${this.api}${this.DetalleCompras}`);
+
+  obtenerEstadosDeCuenta(): Observable<MetodoPagoData[]> {
+    return this.http.get<MetodoPagoData[]>(this.proxiedUrl(`${this.api}/estados-de-cuenta`));
   }
-  obtenerCierreDeCajaDiario():Observable<ResumenCierreCaja>{
-    return this.http.get<ResumenCierreCaja>(`${this.webApi}${this.api}${this.CierreCaja}`);
-  }
-  obtenerEstadosDeCuenta():Observable<MetodoPagoData[]>{
-    return this.http.get<MetodoPagoData[]>(`${this.webApi}${this.api}${this.EstadosCuenta}`);
-  }
-  obtenerCierreCaja(idMes: number, year: number):Observable<any>{
-    return this.http.get<any>(`${this.webApi}${this.api}${this.cierreCajaMensual}mes=${idMes}&year=${year}`);
+
+  obtenerCierreCaja(idMes: number, year: number): Observable<any> {
+    const url = `${this.api}/cierre-caja?mes=${idMes}&year=${year}`;
+    return this.http.get<any>(this.proxiedUrl(url));
   }
 }

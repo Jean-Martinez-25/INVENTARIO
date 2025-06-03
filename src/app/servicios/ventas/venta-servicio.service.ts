@@ -2,58 +2,88 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../envrioment/envrioment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CompraRequest, DatosVenta, DetalleFactura, ListadoCompra, ListadoFacturasPorMes, ListadoVenta } from '../../interfaces/venta/venta-back';
-import { ProductoVentaViewModel } from '../../interfaces/venta/venta';
+import {
+  CompraRequest,
+  DatosVenta,
+  DetalleFactura,
+  ListadoCompra,
+  ListadoFacturasPorMes,
+  ListadoVenta
+} from '../../interfaces/venta/venta-back';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VentaServicioService {
+  // Proxy para convertir HTTP a HTTPS
+  private proxyUrl: string = 'https://corsproxy.io/?'; // Opción más rápida
+  // private proxyUrl: string = 'https://api.allorigins.win/raw?url='; // Alternativa
+
   private webApi: string = environment.endpoint;
   private api: string = 'api/Venta';
   private datosCliente: string = '/formulario-venta';
-  private listadoVenta: string = '/listado-ventas'
+  private listadoVenta: string = '/listado-ventas';
   private infoVenta: string = '/info-ventas';
   private infoCompra: string = '/info-compras';
-  private listadoCompra: string = '/listado-compras'
-  private listadoCompraMes: string = "/listado-compras-por-mes"
-  private listadoVentaMes: string = "/listado-ventas-por-mes"
+  private listadoCompra: string = '/listado-compras';
+  private listadoCompraMes: string = "/listado-compras-por-mes";
+  private listadoVentaMes: string = "/listado-ventas-por-mes";
+
   constructor(private http: HttpClient) { }
 
-  registrarVenta(compra: CompraRequest): Observable<any> {
-    return this.http.post(`${this.webApi}${this.api}`, compra);
+  // Métodos auxiliares
+  private getProxiedUrl(endpoint: string): string {
+    const fullUrl = `${this.webApi}${endpoint}`;
+    return `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
   }
 
+  private getProxiedUrlWithParams(endpoint: string, params: string): string {
+    const fullUrl = `${this.webApi}${endpoint}?${params}`;
+    return `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
+  }
+
+  private makeGetRequestWithParams<T>(endpoint: string, params: HttpParams): Observable<T> {
+    const baseUrl = `${this.webApi}${endpoint}`;
+    const fullUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
+    const proxiedUrl = `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
+    return this.http.get<T>(proxiedUrl);
+  }
+
+  // Métodos adaptados
+  registrarVenta(compra: CompraRequest): Observable<any> {
+    const url = `${this.webApi}${this.api}`;
+    return this.http.post(`${this.proxyUrl}${encodeURIComponent(url)}`, compra);
+  }
 
   obtenerDatos(): Observable<DatosVenta> {
-    return this.http.get<DatosVenta>(`${this.webApi}${this.api}${this.datosCliente}`);
+    return this.http.get<DatosVenta>(this.getProxiedUrl(`${this.api}${this.datosCliente}`));
   }
+
   obtenrListaVentas(): Observable<ListadoVenta[]> {
-    return this.http.get<ListadoVenta[]>(`${this.webApi}${this.api}${this.listadoVenta}`);
+    return this.http.get<ListadoVenta[]>(this.getProxiedUrl(`${this.api}${this.listadoVenta}`));
   }
+
   obtenrInfoVentas(numFactura: number): Observable<DetalleFactura[]> {
-    return this.http.get<DetalleFactura[]>(`${this.webApi}${this.api}${this.infoVenta}?numFactura=${numFactura}`);
+    const params = `numFactura=${numFactura}`;
+    return this.http.get<DetalleFactura[]>(this.getProxiedUrlWithParams(`${this.api}${this.infoVenta}`, params));
   }
+
   obtenerListaCompras(): Observable<ListadoCompra[]> {
-    return this.http.get<ListadoCompra[]>(`${this.webApi}${this.api}${this.listadoCompra}`);
+    return this.http.get<ListadoCompra[]>(this.getProxiedUrl(`${this.api}${this.listadoCompra}`));
   }
+
   obtenrInfoCompras(numFactura: number): Observable<DetalleFactura[]> {
-    return this.http.get<DetalleFactura[]>(`${this.webApi}${this.api}${this.infoCompra}?numFactura=${numFactura}`);
+    const params = `numFactura=${numFactura}`;
+    return this.http.get<DetalleFactura[]>(this.getProxiedUrlWithParams(`${this.api}${this.infoCompra}`, params));
   }
+
   listadoComprasMes(year: number, mes: number): Observable<ListadoFacturasPorMes[]> {
-    return this.http.get<ListadoFacturasPorMes[]>(`${this.webApi}${this.api}${this.listadoCompraMes}`, {
-      params: {
-        year: year,
-        mes: mes
-      }
-    });
+    let params = new HttpParams().set('year', year).set('mes', mes);
+    return this.makeGetRequestWithParams<ListadoFacturasPorMes[]>(`${this.api}${this.listadoCompraMes}`, params);
   }
+
   listadoVentasMes(year: number, mes: number): Observable<ListadoFacturasPorMes[]> {
-    return this.http.get<ListadoFacturasPorMes[]>(`${this.webApi}${this.api}${this.listadoVentaMes}`, {
-      params: {
-        year: year,
-        mes: mes
-      }
-    });
+    let params = new HttpParams().set('year', year).set('mes', mes);
+    return this.makeGetRequestWithParams<ListadoFacturasPorMes[]>(`${this.api}${this.listadoVentaMes}`, params);
   }
 }
