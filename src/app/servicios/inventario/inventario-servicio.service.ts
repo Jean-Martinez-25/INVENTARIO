@@ -2,13 +2,20 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../envrioment/envrioment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { FormProducto, InformacionProducto, Inventario, MovimientoInventarioRequest, ProductoAdd, ProductoViewModel, SimpleViewModel } from '../../interfaces/inventario/inventario';
+import {
+  FormProducto,
+  InformacionProducto,
+  Inventario,
+  MovimientoInventarioRequest,
+  ProductoAdd,
+  ProductoViewModel,
+  SimpleViewModel
+} from '../../interfaces/inventario/inventario';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InventarioServicioService {
-  private proxyUrl: string = 'https://api.allorigins.win/raw?url=';
   private webApi: string = environment.endpoint;
   private api: string = 'api/Inventario/';
   private apiProducto: string = 'api/Producto/';
@@ -24,17 +31,6 @@ export class InventarioServicioService {
 
   constructor(private http: HttpClient) { }
 
-  private getProxiedUrl(endpoint: string): string {
-    const fullUrl = `${this.webApi}${endpoint}`;
-    return `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
-  }
-
-  private getProxiedUrlWithParams(endpoint: string, params: string): string {
-    const fullUrl = `${this.webApi}${endpoint}?${params}`;
-    return `${this.proxyUrl}${encodeURIComponent(fullUrl)}`;
-  }
-
-  // POST y PUT NO usan proxy (AllOrigins no los soporta)
   enviarMovimientoInventario(payload: MovimientoInventarioRequest): Observable<any> {
     return this.http.post<any>(`${this.webApi}${this.apiMov}`, payload);
   }
@@ -53,36 +49,33 @@ export class InventarioServicioService {
     });
   }
 
-  // GET con proxy AllOrigins
   obtenerListadoInventario(): Observable<Inventario[]> {
-    return this.http.get<Inventario[]>(this.getProxiedUrl(`${this.api}${this.listadoInventario}`));
+    return this.http.get<Inventario[]>(`${this.webApi}${this.api}${this.listadoInventario}`);
   }
 
   obtenerMetodosPago(): Observable<SimpleViewModel[]> {
-    return this.http.get<SimpleViewModel[]>(this.getProxiedUrl(`${this.api}${this.metodosPago}`));
+    return this.http.get<SimpleViewModel[]>(`${this.webApi}${this.api}${this.metodosPago}`);
   }
 
   obtenerFormulario(): Observable<FormProducto> {
-    return this.http.get<FormProducto>(this.getProxiedUrl(`${this.apiProducto}${this.select}`));
+    return this.http.get<FormProducto>(`${this.webApi}${this.apiProducto}${this.select}`);
   }
 
   obtenerProductos(): Observable<ProductoViewModel[]> {
-    return this.http.get<ProductoViewModel[]>(this.getProxiedUrl(`${this.api}${this.listadoProductos}`));
+    return this.http.get<ProductoViewModel[]>(`${this.webApi}${this.api}${this.listadoProductos}`);
   }
 
   obtenerProveedores(): Observable<SimpleViewModel[]> {
-    return this.http.get<SimpleViewModel[]>(this.getProxiedUrl(`${this.api}${this.listadoProveedores}`));
+    return this.http.get<SimpleViewModel[]>(`${this.webApi}${this.api}${this.listadoProveedores}`);
   }
 
   informacionProducto(idProducto: number): Observable<InformacionProducto> {
-    const endpoint = `${this.apiProducto}${this.informacionProductos}`;
-    const params = `idProducto=${idProducto}`;
-    return this.http.get<InformacionProducto>(this.getProxiedUrlWithParams(endpoint, params));
+    const endpoint = `${this.webApi}${this.apiProducto}${this.informacionProductos}`;
+    return this.http.get<InformacionProducto>(`${endpoint}?idProducto=${idProducto}`);
   }
 
   datosProductoEditar(idPropietario: number, idProducto: number): Observable<ProductoAdd> {
-    const endpoint = `${this.apiProducto}${this.datosProducto}`;
-    const params = `idPropietario=${idPropietario}&idProducto=${idProducto}`;
-    return this.http.get<ProductoAdd>(this.getProxiedUrlWithParams(endpoint, params));
+    const endpoint = `${this.webApi}${this.apiProducto}${this.datosProducto}`;
+    return this.http.get<ProductoAdd>(`${endpoint}?idPropietario=${idPropietario}&idProducto=${idProducto}`);
   }
 }
