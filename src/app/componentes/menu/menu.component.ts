@@ -53,6 +53,7 @@ export class MenuComponent {
       icon: 'supervisor_account',
       expanded: false,
       subItems: [
+        {label: 'Proveedores', route: '/persona/proveedores'},
         { label: 'Detalles compras', route: '/listado/listado-compras' },
         { label: 'Detalles ventas', route: '/listado/listado-ventas' }
       ]

@@ -1,0 +1,344 @@
+/* Reset y base */
+* {
+  box-sizing: border-box;
+}
+
+/* Contenedor principal */
+.provider-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 1.5rem;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header principal */
+.page-header {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border-left: 4px solid #4285f4;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.page-title i {
+  color: #4285f4;
+  font-size: 1.5rem;
+}
+
+.page-subtitle {
+  color: #6c757d;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Tarjetas */
+.p-card {
+  background: white !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.p-card .p-card-header {
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e9ecef !important;
+  padding: 1.5rem 2rem !important;
+}
+
+.p-card .p-card-body {
+  padding: 0 !important;
+}
+
+.p-card .p-card-content {
+  padding: 2rem !important;
+}
+
+/* Headers de tarjetas */
+.card-header-simple {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-header-simple i {
+  color: #4285f4;
+  font-size: 1.25rem;
+}
+
+.card-header-simple h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.card-subtitle-simple {
+  color: #6c757d;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.table-header-simple {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.table-header-simple i {
+  color: #4285f4;
+  font-size: 1.25rem;
+}
+
+.table-header-simple h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.table-subtitle {
+  color: #6c757d;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.provider-count {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+/* Formulario */
+.provider-form {
+  padding: 2rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group.full-width {
+  flex: 100%;
+}
+
+.input-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.input-group label i {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.input-group input {
+  height: 42px !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 6px !important;
+  padding: 0 12px !important;
+  font-size: 0.9rem !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.input-group input:focus {
+  border-color: #4285f4 !important;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2) !important;
+  outline: none !important;
+}
+
+.input-group input.p-invalid {
+  border-color: #dc3545 !important;
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+  margin-top: 1.5rem;
+}
+
+.save-btn {
+  background: #4285f4 !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 2rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.save-btn:hover {
+  background: #3367d6 !important;
+}
+
+/* Tabla */
+.clean-table .p-datatable-header {
+  display: none;
+}
+
+.clean-table .p-datatable-thead>tr>th {
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  padding: 1rem !important;
+  border-bottom: 2px solid #e9ecef !important;
+  font-size: 0.85rem !important;
+}
+
+.clean-table .p-datatable-thead>tr>th i {
+  color: #6c757d;
+  margin-right: 0.5rem;
+}
+
+.clean-table .p-datatable-tbody>tr>td {
+  padding: 1rem !important;
+  border-bottom: 1px solid #e9ecef !important;
+  font-size: 0.9rem !important;
+  color: #495057 !important;
+  vertical-align: middle;
+}
+
+.clean-table .p-datatable-tbody>tr:hover {
+  background: #f8f9fa !important;
+}
+
+.actions-col {
+  text-align: center;
+}
+
+.edit-btn {
+  background: #4285f4 !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.5rem !important;
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.edit-btn:hover {
+  background: #3367d6 !important;
+}
+
+/* Estado vacío */
+.no-data {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.no-data-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #6c757d;
+}
+
+.no-data-content i {
+  font-size: 2.5rem;
+  color: #adb5bd;
+}
+
+.no-data-content p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Paginador */
+.p-paginator {
+  background: #f8f9fa !important;
+  border: none !important;
+  border-top: 1px solid #e9ecef !important;
+  padding: 1rem !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+  border-radius: 4px !important;
+  margin: 0 0.25rem !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: #4285f4 !important;
+  border-color: #4285f4 !important;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .provider-container {
+    padding: 1rem;
+  }
+
+  .page-header {
+    padding: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .provider-form {
+    padding: 1.5rem;
+  }
+
+  .p-card .p-card-header {
+    padding: 1.25rem !important;
+  }
+
+  .p-card .p-card-content {
+    padding: 1.5rem !important;
+  }
+}

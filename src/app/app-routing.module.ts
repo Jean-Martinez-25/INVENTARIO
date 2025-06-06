@@ -20,6 +20,10 @@ const routes : Routes = [
     loadChildren: () => import('./componentes/detalles/detalles.module').then(m => m.DetallesModule)
   },
   {
+    path: 'persona',
+    loadChildren: () => import('./componentes/persona/persona.module').then(m => m.PersonaModule)
+  },
+  {
     path: '**', redirectTo: 'ventas/agregar-venta'
   }
 ]
