@@ -8,3 +8,10 @@ export interface ProveedoresDto {
   fechaCreacion: string; // o Date, dependiendo de cómo lo manejes
   estado: boolean;
 }
+export interface ProveedoresAdd {
+  nombre: string;
+  documento: string;
+  correo: string;
+  direccion: string;
+  telefono: string;
+}

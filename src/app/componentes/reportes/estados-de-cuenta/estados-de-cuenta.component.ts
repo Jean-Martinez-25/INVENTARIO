@@ -60,7 +60,7 @@ export class EstadosDeCuentaComponent implements OnInit {
           color2 = '#81C784';
           icon = PrimeIcons.MONEY_BILL;
           break;
-        case 'Credito':
+        case 'Crédito':
           color1 = '#2196F3'; // Azul
           color2 = '#64B5F6';
           icon = PrimeIcons.CREDIT_CARD;
@@ -88,4 +88,33 @@ export class EstadosDeCuentaComponent implements OnInit {
       };
     });
   }
+  getCardClass(metodoPago: string): string {
+  switch (metodoPago.toLowerCase()) {
+    case 'efectivo':
+      return 'efectivo';
+    case 'crédito':
+    case 'credito':
+      return 'credito';
+    case 'transferencia':
+      return 'transferencia';
+    default:
+      return 'efectivo'; // clase por defecto
+  }
+}
+
+getIconClass(primeIcon: string): string {
+  // Mapea los iconos de PrimeNG a Font Awesome
+  switch (primeIcon) {
+    case 'pi pi-money-bill':
+      return 'fas fa-money-bill-wave';
+    case 'pi pi-credit-card':
+      return 'fas fa-credit-card';
+    case 'pi pi-wallet':
+      return 'fas fa-wallet';
+    case 'pi pi-question':
+      return 'fas fa-question-circle';
+    default:
+      return 'fas fa-question-circle';
+  }
+}
 }

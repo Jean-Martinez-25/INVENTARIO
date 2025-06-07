@@ -1,63 +1,79 @@
 <div class="table">
-    <div class="content">
-        <div class="div-title">
-            <h2 class="titulo-pages">
-                📄 Estados de cuenta
-            </h2>
+    <div class="content container">
+        <div class="header">
+            <h1 class="titulo-principal">📊 Estados de Cuenta</h1>
+            <p class="subtitulo">Resumen detallado de métodos de pago y transacciones</p>
         </div>
-        <!-- ✅ Tabla de métodos de pago -->
-        <p-table [value]="backendData" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20]"
-            [responsiveLayout]="'scroll'" [globalFilterFields]="['id', 'nombre', 'marca', 'cantidad', 'seccion']"
-            sortMode="multiple">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th pSortableColumn="metodoPago" style="background-color: #0b1a2c; color: white;">
-                        Metodo pago <p-sortIcon field="metodoPago" />
-                    </th>
-                    <th pSortableColumn="totalValor" style="background-color: #0b1a2c; color: white;">
-                        Total <p-sortIcon field="total" />
-                    </th>
-                    <th pSortableColumn="cantidadTransacciones" style="background-color: #0b1a2c; color: white;">
-                        Cantidad <p-sortIcon field="cantidad" />
-                    </th>
-                </tr>
-            </ng-template>
 
-            <ng-template pTemplate="body" let-producto>
-                <tr>
-                    <td> <strong>{{ producto.metodoPago }}</strong> </td>
-                    <td> <span class="estado-disponible">{{ producto.totalValor | currency:'COP' }}</span> </td>
-                    <td>{{ producto.cantidadTransacciones }}</td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
-    <br>
-    <div class="content">
-        <div class="p-grid p-dir-row p-flex-wrap p-jc-start container-cards">
-            <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let item of meterGroupDisplayValues" style="display: flex; justify-content: center;"> <p-card
-                    styleClass="custom-card-in-grid">
-                    <div class="card-content-wrapper">
-                        <div class="card-icon-section">
-                            <div class="progress-bar-container" [style.background-color]="item.color2">
-                                <div class="progress-fill" [style.width]="item.value + '%'"
-                                    [style.background-color]="item.color1">
-                                    <i [class]="item.icon + ' card-primeicon'"></i>
-                                </div>
-                            </div>
-                        </div>
+        <div class="tabla-container">
+            <div class="tabla-header">
+                <h3 class="tabla-titulo">
+                    <i class="fas fa-table"></i>
+                    Métodos de Pago
+                </h3>
+            </div>
+            <div class="tabla-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <i class="fas fa-credit-card" style="margin-right: 8px;"></i>
+                                Método de Pago
+                            </th>
+                            <th>
+                                <i class="fas fa-dollar-sign" style="margin-right: 8px;"></i>
+                                Total
+                            </th>
+                            <th>
+                                <i class="fas fa-hashtag" style="margin-right: 8px;"></i>
+                                Cantidad
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of backendData">
+                            <td class="metodo-pago">{{ item.metodoPago }}</td>
+                            <td><span class="valor-total">{{ item.totalValor | currency:'COP' }}</span></td>
+                            <td class="cantidad">{{ item.cantidadTransacciones }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                        <div class="card-info-section">
-                            <span class="p-text-bold card-label"> <strong>{{ item.label }}</strong> </span>
-                            <div class="card-percentage" [style.color]="item.color1">{{ item.value | number:'1.2-2'}}%
-                            </div>
-                            <div class="card-details">
-                                <div>Total: {{ item.totalValorOriginal | currency:'USD':'symbol':'1.0-0' }}</div>
-                                <div>Transacciones: {{ item.cantidadTransaccionesOriginal }}</div>
-                            </div>
+        <div class="cards-grid">
+            <div class="payment-card fade-in" *ngFor="let item of meterGroupDisplayValues; let i = index"
+                [ngClass]="getCardClass(item.label)" [style.animation-delay]="(i * 0.1) + 's'">
+
+                <div class="card-header">
+                    <div class="card-icon-container">
+                        <i [class]="getIconClass(item.icon)" class="card-icon"></i>
+                    </div>
+                    <div>
+                        <h3 class="card-title">{{ item.label }}</h3>
+                        <div class="card-percentage">
+                            {{ item.value | number:'1.2-2' }}<span class="percentage-symbol">%</span>
                         </div>
                     </div>
-                </p-card>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" [style.--progress-width]="item.value + '%'"
+                        [style.width]="item.value + '%'">
+                    </div>
+                </div>
+
+                <div class="card-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Total:</span>
+                        <span class="detail-value">{{ item.totalValorOriginal | currency:'USD':'symbol':'1.0-0'
+                            }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Transacciones:</span>
+                        <span class="detail-value">{{ item.cantidadTransaccionesOriginal }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

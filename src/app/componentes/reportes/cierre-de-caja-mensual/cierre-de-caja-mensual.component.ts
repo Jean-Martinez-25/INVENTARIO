@@ -81,6 +81,22 @@ export class CierreDeCajaMensualComponent implements OnInit {
     })
   }
   cargarGraficos() {
+    const valores = [
+      this.datos.totalIngresosEfectivoMesActual,
+      Math.abs(this.datos.totalEgresosEfectivoMesActual), // Valor absoluto para mejor visualización
+      this.datos.totalVentasCreditoMesActual,
+      this.datos.ingresosTransferenciaMesActual,
+      this.datos.pagosTransferenciaMesActual + this.datos.retirosTransferenciaMesActual,
+      this.datos.gananciasDelMesActual
+    ];
+    const colores = [
+      '#10B981', // Verde para ingresos efectivo
+      '#EF4444', // Rojo para egresos efectivo
+      '#3B82F6', // Azul para ventas crédito
+      '#F59E0B', // Naranja para ingresos transferencias
+      '#8B5CF6', // Púrpura para egresos transferencias
+      '#84CC16'  // Verde lima para ganancias
+    ];
     this.tablaResumen = [
       { descripcion: 'Saldo Mes Anterior (Efectivo)', valor: this.datos.saldoMesAnteriorEfectivo },
       { descripcion: 'Ingresos en Efectivo', valor: this.datos.totalIngresosEfectivoMesActual },
@@ -145,36 +161,143 @@ export class CierreDeCajaMensualComponent implements OnInit {
     ];
 
     // Gráfica
+
     this.chartData = {
-      labels: ['Ingresos Efectivo', 'Egresos Efectivo', 'Ventas Crédito', 'Ingresos Transferencias', 'Egresos Transferencias', 'Ganancias'],
+      labels: [
+        'Ingresos\nEfectivo',
+        'Egresos\nEfectivo',
+        'Ventas\nCrédito',
+        'Ingresos\nTransferencias',
+        'Egresos\nTransferencias',
+        'Ganancias\nMes'
+      ],
       datasets: [
         {
-          label: 'Valores Mensuales',
-          backgroundColor: ['#28a745', '#dc3545', '#007bff', '#fd7e14', '#17a2b8', '#6f42c1'],
-          data: [
-            this.datos.totalIngresosEfectivoMesActual,
-            this.datos.totalEgresosEfectivoMesActual,
-            this.datos.totalVentasCreditoMesActual,
-            this.datos.totalVentasTransferenciaMesActual,
-            this.datos.pagosTransferenciaMesActual + this.datos.retirosTransferenciaMesActual,
-            this.datos.gananciasDelMesActual
-          ]
+          label: 'Valores Financieros ($COP)',
+          backgroundColor: colores,
+          borderColor: colores.map(color => color + '80'), // Agregar transparencia al borde
+          borderWidth: 2,
+          borderRadius: 8,
+          borderSkipped: false,
+          data: valores,
+          // Gradientes para las barras
+
         }
       ]
     };
 
     this.chartOptions = {
       responsive: true,
+      maintainAspectRatio: true,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
       plugins: {
         legend: {
-          position: 'top'
+          display: true,
+          position: 'top',
+          labels: {
+            usePointStyle: true,
+            pointStyle: 'rectRounded',
+            padding: 20,
+            font: {
+              size: 14,
+              weight: '600'
+            },
+            color: '#374151'
+          }
         },
         tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          borderColor: '#e5e7eb',
+          borderWidth: 1,
+          cornerRadius: 8,
+          displayColors: true,
+          titleFont: {
+            size: 14 // Aumenta el tamaño del título del tooltip
+          },
+          bodyFont: {
+            size: 13 // Aumenta el tamaño del cuerpo del tooltip
+          },
           callbacks: {
+            title: function (context: any) {
+              return context[0].label.replace('\n', ' ');
+            },
             label: function (context: any) {
-              return `$${context.raw.toLocaleString()}`;
+              const value = context.raw;
+              const percentage = ((value / valores.reduce((a, b) => Math.abs(a) + Math.abs(b), 0)) * 100).toFixed(1);
+              return [
+                `Valor: $${value.toLocaleString('es-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+                `Participación: ${percentage}%`
+              ];
             }
           }
+        },
+        // Plugin personalizado para mostrar valores en las barras
+        datalabels: false // Desactivamos si existe el plugin datalabels
+      },
+      scales: {
+        x: {
+          display: true,
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#6B7280',
+            font: {
+              size: 13,
+              weight: '500'
+            },
+            maxRotation: 0,
+            callback: function (value: any, index: any) {
+              // Dividir etiquetas largas en múltiples líneas
+              const labels = [
+                'Ingresos\nEfectivo',
+                'Egresos\nEfectivo',
+                'Ventas\nCrédito',
+                'Ingresos\nTransferencias',
+                'Egresos\nTransferencias',
+                'Ganancias'
+              ];
+              return labels[index] || '';
+            }
+          }
+        },
+        y: {
+          display: true,
+          beginAtZero: true,
+          grid: {
+            color: '#F3F4F6',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#6B7280',
+            font: {
+              size: 12
+            },
+            callback: function (value: any) {
+              return '$' + value.toLocaleString('es-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              });
+            }
+          }
+        }
+      },
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart'
+      },
+      // Configuración adicional para mejorar la apariencia
+      layout: {
+        padding: {
+          top: 30,
+          bottom: 20,
+          left: 15,
+          right: 15
         }
       }
     };
@@ -238,7 +361,7 @@ export class CierreDeCajaMensualComponent implements OnInit {
 
   get nombreMesYAnio(): string {
     const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     return `${meses[this.mes - 1]} ${this.year}`;
   }
 
@@ -256,5 +379,19 @@ export class CierreDeCajaMensualComponent implements OnInit {
   consultarRetiros(): void {
     console.log('Consultando retiros de caja y transferencias...');
     // this.router.navigate(['/ruta-a-retiros'], { queryParams: { mes, anio } });
+  }
+  obtenerEstadisticasGrafico() {
+    const ingresos = this.datos.totalIngresosEfectivoMesActual + this.datos.ingresosTransferenciaMesActual;
+    const egresos = Math.abs(this.datos.totalEgresosEfectivoMesActual) +
+      (this.datos.pagosTransferenciaMesActual + this.datos.retirosTransferenciaMesActual);
+    const flujoNeto = ingresos - egresos;
+
+    return {
+      totalIngresos: ingresos,
+      totalEgresos: egresos,
+      flujoNeto: flujoNeto,
+      margenGanancia: this.datos.totalVentasGeneralMesActual > 0 ?
+        (this.datos.gananciasDelMesActual / this.datos.totalVentasGeneralMesActual * 100).toFixed(1) : '0'
+    };
   }
 }

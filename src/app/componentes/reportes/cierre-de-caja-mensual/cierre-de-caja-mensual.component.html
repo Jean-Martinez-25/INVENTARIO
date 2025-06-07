@@ -1,112 +1,184 @@
 <div class="table">
     <div class="content">
-        <div class="div-title">
-            <h2 class="titulo-pages">
-                📄 Cierre de caja mensual - {{ nombreMesYAnio }}
-            </h2>
-        </div>
-        <div class="flex align-items-center gap-3 mb-4">
-            <label for="mesAnio">Seleccione Mes y Año:</label>
-            <p-calendar [(ngModel)]="fechaSeleccionada" [view]="'month'" dateFormat="MM yy" (onSelect)="onFechaChange()"
-                inputId="mesAnio" showIcon="true" [yearNavigator]="true" [monthNavigator]="true"
-                [style]="{ width: '200px' }"></p-calendar>
-        </div>
-        <div class="contenedor-cierre">
-            <div class="p-grid p-dir-row p-flex-wrap p-jc-start container-cards">
-                <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let item of resumenCajaBase"
-                    style="display: flex; justify-content: center; margin-bottom: 2%;">
-                    <p-card styleClass="custom-card-in-grid">
-                        <div class="card-title-wrapper">
-                            <span class="p-text-bold card-label">
-                                <strong>{{ item.label }}</strong>
-                            </span>
-                        </div>
-                        <div class="card-content-wrapper">
-                            <div class="card-icon-section">
-                                <div class="progress-bar-container" [style.background-color]="item.color2">
-                                    <div class="progress-fill" style="width: 100%;"
-                                        [style.background-color]="item.color1">
-                                        <i [class]="item.icon + ' card-primeicon'"></i>
-                                    </div>
-                                </div>
+        <div class="container">
+            <div class="header">
+                <h1><i class="fas fa-chart-line"></i> 📄 Cierre de caja mensual - {{ nombreMesYAnio }}</h1>
+            </div>
+
+            <div class="date-selector">
+                <label for="mesAnio">
+                    <i class="fas fa-calendar-alt"></i> Seleccione Mes y Año:
+                </label>
+                <p-calendar [(ngModel)]="fechaSeleccionada" [view]="'month'" dateFormat="MM yy"
+                    (onSelect)="onFechaChange()" inputId="mesAnio" showIcon="true" [yearNavigator]="true"
+                    [monthNavigator]="true" [style]="{ width: '200px' }" class="date-input"></p-calendar>
+            </div>
+
+            <div class="content">
+                <!-- Tarjetas de resumen principal -->
+                <div class="summary-cards">
+                    <div class="card card-balance" *ngFor="let item of resumenCajaBase">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">{{ item.label }}</div>
+                                <div class="card-value">{{ item.totalValor | currency:'USD':'symbol':'1.0-0' }}</div>
+                                <div class="card-subtitle">Información financiera</div>
                             </div>
-                            <div class="card-info-section">
-                                <div class="card-details">
-                                    <div>Total: {{ item.totalValor | currency:'USD':'symbol':'1.0-0' }}</div>
-                                </div>
+                            <div class="card-icon" [style.background]="item.color1">
+                                <i [class]="item.icon"></i>
                             </div>
                         </div>
-                    </p-card>
+                    </div>
                 </div>
 
-            </div>
+                <div class="divider"></div>
 
-            <mat-divider class="separador"></mat-divider>
-
-            <div class="chart-wrapper">
-                <p-chart type="bar" [data]="chartData" [options]="chartOptions" style="width: 100%"></p-chart>
-            </div>
-
-            <div class="p-grid p-dir-row p-flex-wrap p-jc-start container-cards">
-                <div class="p-col-12 p-md-6 p-lg-4" *ngFor="let item of resumenCaja"
-                    style="display: flex; justify-content: center; margin-bottom: 2%;">
-                    <p-card styleClass="custom-card-in-grid">
-                        <div class="card-content-wrapper">
-                            <div class="card-icon-section">
-                                <div class="progress-bar-container" [style.background-color]="item.color2">
-                                    <div class="progress-fill" style="width: 100%;"
-                                        [style.background-color]="item.color1">
-                                        <i [class]="item.icon + ' card-primeicon'"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-info-section">
-                                <span class="p-text-bold card-label">
-                                    <strong>{{ item.label }}</strong>
+                <!-- Sección del gráfico -->
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-bar"></i> Análisis Financiero Mensual
+                        </h3>
+                        <div class="chart-stats" *ngIf="datos">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Ingresos:</span>
+                                <span class="stat-value positive">
+                                    {{ (datos.totalIngresosEfectivoMesActual + datos.ingresosTransferenciaMesActual) |
+                                    currency:'USD':'symbol':'1.0-0' }}
                                 </span>
-                                <div class="card-details">
-                                    <div>Total: {{ item.totalValor | currency:'USD' }}</div>
-                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Total Egresos:</span>
+                                <span class="stat-value negative">
+                                    {{ ((datos.totalEgresosEfectivoMesActual) +
+                                    datos.pagosTransferenciaMesActual + datos.retirosTransferenciaMesActual) |
+                                    currency:'USD':'symbol':'1.0-0' }}
+                                </span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Flujo Neto:</span>
+                                <span class="stat-value" [ngClass]="{
+                    'positive': (datos.totalIngresosEfectivoMesActual + datos.ingresosTransferenciaMesActual) - ((datos.totalEgresosEfectivoMesActual) + datos.pagosTransferenciaMesActual + datos.retirosTransferenciaMesActual) >= 0,
+                    'negative': (datos.totalIngresosEfectivoMesActual + datos.ingresosTransferenciaMesActual) - ((datos.totalEgresosEfectivoMesActual) + datos.pagosTransferenciaMesActual + datos.retirosTransferenciaMesActual) < 0
+                }">
+                                    {{ ((datos.totalIngresosEfectivoMesActual + datos.ingresosTransferenciaMesActual) -
+                                    ((datos.totalEgresosEfectivoMesActual) + datos.pagosTransferenciaMesActual +
+                                    datos.retirosTransferenciaMesActual)) | currency:'USD':'symbol':'1.0-0' }}
+                                </span>
                             </div>
                         </div>
-                    </p-card>
-                </div>
-            </div>
+                    </div>
 
-            <mat-divider class="separador"></mat-divider>
+                    <div class="chart-container">
+                        <p-chart type="bar" [data]="chartData" [options]="chartOptions"
+                            class="financial-chart">
+                        </p-chart>
+                    </div>
 
-            <mat-card>
-                <mat-card-title style="text-align: center;">Resumen Financiero del Mes</mat-card-title>
-                <div class="tabla-wrapper">
-                    <table mat-table [dataSource]="tablaResumen" class="mat-elevation-z2">
-
-                        <ng-container matColumnDef="descripcion">
-                            <th mat-header-cell *matHeaderCellDef>Descripción</th>
-                            <td mat-cell *matCellDef="let element"> <strong>{{ element.descripcion }}</strong> </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="valor">
-                            <th mat-header-cell *matHeaderCellDef>Valor</th>
-                            <td mat-cell *matCellDef="let element">
-                                <span [ngClass]="{'negativo': element.valor < 0, 'positivo': element.valor >= 0}">
-                                    {{ element.valor | currency:'USD':'symbol':'1.0-0' }}
+                    <!-- Indicadores de rendimiento -->
+                    <div class="performance-indicators" *ngIf="datos">
+                        <div class="indicator">
+                            <div class="indicator-icon">
+                                <i class="fas fa-trending-up"></i>
+                            </div>
+                            <div class="indicator-content">
+                                <span class="indicator-label">Margen de Ganancia</span>
+                                <span class="indicator-value">
+                                    {{ datos.totalVentasGeneralMesActual > 0 ? (datos.gananciasDelMesActual /
+                                    datos.totalVentasGeneralMesActual * 100).toFixed(1) : '0' }}%
                                 </span>
-                            </td>
-                        </ng-container>
+                            </div>
+                        </div>
 
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        <div class="indicator">
+                            <div class="indicator-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="indicator-content">
+                                <span class="indicator-label">Ratio Ingresos/Egresos</span>
+                                <span class="indicator-value">
+                                    {{ ((datos.totalIngresosEfectivoMesActual + datos.ingresosTransferenciaMesActual) /
+                                    ((datos.totalEgresosEfectivoMesActual) + datos.pagosTransferenciaMesActual +
+                                    datos.retirosTransferenciaMesActual || 1)).toFixed(2) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="indicator">
+                            <div class="indicator-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="indicator-content">
+                                <span class="indicator-label">Efectivo vs Transferencias</span>
+                                <span class="indicator-value">
+                                    {{ ((datos.totalIngresosEfectivoMesActual / (datos.totalIngresosEfectivoMesActual +
+                                    datos.ingresosTransferenciaMesActual || 1)) * 100).toFixed(1) }}% /
+                                    {{ ((datos.ingresosTransferenciaMesActual / (datos.totalIngresosEfectivoMesActual +
+                                    datos.ingresosTransferenciaMesActual || 1)) * 100).toFixed(1) }}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjetas de métodos de pago -->
+                <div class="summary-cards">
+                    <div class="card" *ngFor="let item of resumenCaja" [style.--card-color]="item.color1">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">{{ item.label }}</div>
+                                <div class="card-value">{{ item.totalValor | currency:'USD' }}</div>
+                                <div class="card-subtitle">Resumen del período</div>
+                            </div>
+                            <div class="card-icon" [style.background]="item.color1">
+                                <i [class]="item.icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen financiero detallado -->
+                <div class="financial-summary">
+                    <h3 class="summary-title">
+                        <i class="fas fa-file-invoice-dollar"></i> Resumen Financiero Detallado
+                    </h3>
+                    <table class="summary-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-list"></i> Descripción</th>
+                                <th><i class="fas fa-dollar-sign"></i> Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of tablaResumen">
+                                <td class="description">{{ item.descripcion }}</td>
+                                <td>
+                                    <span
+                                        [ngClass]="{'value-positive': item.valor >= 0, 'value-negative': item.valor < 0}">
+                                        {{ item.valor | currency:'USD':'symbol':'1.0-0' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
-            </mat-card>
+
+                <!-- Acciones -->
+                <div class="actions">
+                    <button class="action-btn" (click)="consultarCompras()">
+                        <i class="fas fa-file-invoice"></i>
+                        Consultar Facturas de Compra del Mes
+                    </button>
+                    <button class="action-btn" (click)="consultarVentas()">
+                        <i class="fas fa-receipt"></i>
+                        Consultar Facturas de Venta del Mes
+                    </button>
+                    <button class="action-btn" (click)="consultarRetiros()">
+                        <i class="fas fa-money-bill-transfer"></i>
+                        Consultar Retiros de Caja y Transferencias
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="acciones-finales mt-5 d-flex justify-content-center gap-3 flex-wrap">
-        <p-button label="Consultar Facturas de Compra del Mes" icon="pi pi-file" class="p-button-info" (click)="consultarCompras()"></p-button>
-
-        <p-button label="Consultar Facturas de Venta del Mes" icon="pi pi-file" class="p-button-info"  (click)="consultarVentas()"></p-button>
-
-        <p-button label="Consultar Retiros de Caja y Transferencias" icon="pi pi-wallet" class="p-button-info" (click)="consultarRetiros()"></p-button>
     </div>
 </div>
