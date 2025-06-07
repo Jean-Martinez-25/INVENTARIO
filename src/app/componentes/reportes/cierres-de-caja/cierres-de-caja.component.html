@@ -1,122 +1,150 @@
 <div class="table">
     <div class="content">
-        <div>
-            <h2 class="titulo-pages">
-                📄 Cierre de caja {{ fechaHoy | date:'EEEE d \'de\' MMMM yyyy' }}
-            </h2>
-        </div>
-        <mat-card class="mb-4">
-            <mat-card-header>
-                <mat-card-title>
-                    <h2 class="titulo-centrado">
-                        Facturas ventas
-                    </h2>
-                </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p-table [value]="facturasVentas" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'"
-                    class="mb-3">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th># Factura</th>
-                            <th> Cliente </th>
-                            <th>Método de Pago</th>
-                            <th>Total</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-factura>
-                        <tr>
-                            <td> <strong>{{ factura.numeroFactura }}</strong> </td>
-                            <td>{{ factura.cliente }}</td>
-                            <td>{{ factura.metodoPago }}</td>
-                            <td>{{ factura.valor | currency:'COP' }}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </mat-card-content>
-        </mat-card>
-
-        <!-- Card: Facturas de Compra -->
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>
-                    <h2 class="titulo-centrado">
-                        Facturas Compras
-                    </h2>
-                </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p-table [value]="facturasCompras" [paginator]="true" [rows]="5" [responsiveLayout]="'scroll'">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th># Factura</th>
-                            <th>Proveedor</th>
-                            <th>Método de Pago</th>
-                            <th>Total</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-factura>
-                        <tr>
-                            <td> <strong>{{ factura.numeroFactura }}</strong> </td>
-                            <td>{{ factura.nombre }}</td>
-                            <td>{{ factura.metodoPago }}</td>
-                            <td>{{ factura.valor | currency:'COP' }}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </mat-card-content>
-        </mat-card>
-
-    </div>
-    <div class="div-title">
-        <h2 class="titulo-pages">Totales diario</h2>
-    </div>
-
-    <div class="content-flex">
-        <div *ngFor="let grafico of graficosTotales; let i = index" class="valores">
-            <div class="name text-center">
-                    <strong>{{ grafico.label }}</strong>
-                </div>
-            <div>
-                <canvas id="chart-{{i}}" width="200" height="200"></canvas>
+        <div class="container">
+            <div class="header">
+                <h1 class="titulo-principal">📊 Cierre de Caja Diario</h1>
+                <p class="fecha">{{ fechaHoy | date: 'fullDate' }}</p>
             </div>
-            <div class="text-center">
-                <strong>
-                    {{ grafico.porcentaje.toFixed(2) }}%
-                </strong>
-                <div class="footer">
-                    <p class="text-end">{{ grafico.valor | currency:'COP':'symbol':'1.0' }}</p>
+
+            <!-- Resumen estadístico -->
+            <div class="stats-overview">
+                <div class="stat-item">
+                    <div class="stat-value">{{ facturasVentas.length + facturasCompras.length }}</div>
+                    <div class="stat-label">Total Facturas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">COP{{ totalGeneral | number:'1.0-0' }}</div>
+                    <div class="stat-label">Total Transacciones</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">COP{{ (totalGlobalVendido - totalGlobalComprado) | number:'1.0-0' }}</div>
+                    <div class="stat-label">Balance Neto</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ porcentajeVenta | number: '1.2-2' }}%</div>
+                    <div class="stat-label">Margen Ventas</div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="content-flex">
-        <div class="valores">
-            <div class="name-total-ventas text-center">
-                <strong>Total ventas</strong>
+
+
+            <!-- Facturas de Ventas -->
+            <div class="section">
+                <h2 class="section-title">💰 Facturas de Ventas</h2>
+                <div class="card">
+                    <div class="table-container">
+                        <p-table [value]="facturasVentas" [paginator]="true" [rows]="5"
+                            [rowsPerPageOptions]="[5, 10, 20, 50]" [responsiveLayout]="'scroll'"
+                            class="mi-tabla-personalizada">
+                            <ng-template pTemplate="header">
+                                <tr class="tabla-header">
+                                    <th># Factura</th>
+                                    <th>Cliente</th>
+                                    <th>Método de Pago</th>
+                                    <th>Total</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-factura>
+                                <tr>
+                                    <td><strong>{{ factura.numeroFactura }}</strong></td>
+                                    <td>{{ factura.cliente }}</td>
+                                    <td>
+                                        <span class="badge" [ngClass]="{
+                                                'transferencia-met': factura.metodoPago === 'Transferencia',
+                                                'efectivo': factura.metodoPago === 'Efectivo'
+                                            }">
+                                            {{ factura.metodoPago }}
+                                        </span>
+                                    </td>
+                                    <td><strong>{{ factura.valor | currency: 'COP' }}</strong></td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
             </div>
-            <div>
-                <canvas id="chartTotalVentas" width="200" height="200"></canvas>
+
+            <!-- Facturas de Compras -->
+            <div class="section">
+                <h2 class="section-title">🛒 Facturas de Compras</h2>
+                <div class="card">
+                    <div class="table-container">
+                        <p-table [value]="facturasCompras" [paginator]="true" [rows]="5"
+                            [rowsPerPageOptions]="[5, 10, 20, 50]" [responsiveLayout]="'scroll'"
+                            class="mi-tabla-personalizada">
+                            <ng-template pTemplate="header">
+                                <tr class="tabla-header">
+                                    <th># Factura</th>
+                                    <th>Cliente</th>
+                                    <th>Método de Pago</th>
+                                    <th>Total</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-factura>
+                                <tr>
+                                    <td><strong>{{ factura.numeroFactura }}</strong></td>
+                                    <td>{{ factura.nombre }}</td>
+                                    <td>
+                                        <span class="badge" [ngClass]="{
+                                                'transferencia-met': factura.metodoPago === 'Transferencia',
+                                                'efectivo': factura.metodoPago === 'Efectivo'
+                                            }">
+                                            {{ factura.metodoPago }}
+                                        </span>
+                                    </td>
+                                    <td><strong>{{ factura.valor | currency: 'COP' }}</strong></td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
             </div>
-            <div class="text-center">
-                <strong> {{porcentajeVenta.toFixed(2)}} %</strong>
-            </div>
-            <div class="footer-total-ventas">
-                <p class="text-end"> {{totalGlobalVendido | currency:'COP':'symbol':'1.0' }} </p>
-            </div>
-        </div>
-        <div class="valores">
-            <div class="name-total-compras text-center">
-                <strong>Total compras</strong>
-            </div>
-            <div>
-                <canvas id="chartTotalCompras" width="200" height="200"></canvas>
-            </div>
-            <div class="text-center">
-                <strong> {{porcentajeCompra.toFixed(2)}} %</strong>
-            </div>
-            <div class="footer-total-compras">
-                <p class="text-end"> {{ totalGlobalComprado | currency:'COP':'symbol':'1.0' }} </p>
+
+            <!-- Totales Diarios -->
+            <div class="totales-section">
+                <h2 class="section-title">📈 Totales Diarios</h2>
+
+                <div class="totales-grid">
+                    <div *ngFor="let grafico of graficosTotales; let i = index" class="chart-card transferencia pulse">
+                        <h3 class="chart-title transferencia">{{ grafico.label }}</h3>
+                        <div class="chart-container">
+                            <canvas [id]="'chart-' + i"></canvas>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="porcentaje">{{ grafico.porcentaje | number:'1.2-2' }}%</div>
+                            <div class="valor-badge transferencia">COP{{ grafico.valor | number:'1.0-0' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen de Totales -->
+                <div class="resumen-cards">
+                    <!-- Total Ventas -->
+                    <div class="chart-card ventas">
+                        <h3 class="chart-title ventas">Total Ventas</h3>
+                        <div class="chart-container">
+                            <canvas id="chartTotalVentas"></canvas>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="porcentaje">{{ porcentajeVenta | number:'1.2-2' }}%</div>
+                            <div class="valor-badge ventas">COP{{ totalGlobalVendido | number:'1.0-0' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Total Compras -->
+                    <div class="chart-card compras">
+                        <h3 class="chart-title compras">Total Compras</h3>
+                        <div class="chart-container">
+                            <canvas id="chartTotalCompras"></canvas>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="porcentaje">{{ porcentajeCompra | number:'1.2-2' }}%</div>
+                            <div class="valor-badge compras">COP{{ totalGlobalComprado | number:'1.0-0' }}</div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
