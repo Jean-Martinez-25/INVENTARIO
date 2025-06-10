@@ -12,6 +12,7 @@ import { environment } from '../../envrioment/envrioment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DetalleCompra, DetalleVenta } from '../../interfaces/detalles/detalle-venta';
+import { PagoDeuda } from '../../interfaces/venta/deudas';
 
 @Injectable({
   providedIn: 'root'
@@ -78,5 +79,12 @@ export class ReportesService {
 
   obtenerCierreCaja(idMes: number, year: number): Observable<any> {
     return this.http.get<any>(`${this.webApi}${this.api}/cierre-caja?mes=${idMes}&year=${year}`);
+  }
+
+  getDeudas(): Observable<any> {
+    return this.http.get<any>(`${this.webApi}${this.api}/listado-clientes-deudas`);
+  }
+   registrarPago(pago: PagoDeuda): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.webApi}${this.api}/registrar-pago`, pago);
   }
 }

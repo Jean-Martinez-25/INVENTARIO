@@ -1,13 +1,10 @@
+import { MatDialog } from '@angular/material/dialog';
+import { SimpleViewModel } from '../../../interfaces/inventario/inventario';
+import { ReportesService } from './../../../servicios/reportes/reportes.service';
 import { Component, OnInit } from '@angular/core';
-
-export interface Deuda {
-  idVenta: number;
-  valor: number;
-  numeroFactura: number;
-  metodoPagoNombre: string;
-  clienteNombre: string;
-  fecha: string;
-}
+import { PagoDeudasComponent } from '../pago-deudas/pago-deudas.component';
+import { Deuda, PagoDeuda } from '../../../interfaces/venta/deudas';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-listado-deudas',
@@ -15,36 +12,23 @@ export interface Deuda {
   styleUrl: './listado-deudas.component.css'
 })
 export class ListadoDeudasComponent implements OnInit{
-  deudas: Deuda[] = [
-    {
-      "idVenta": 3,
-      "valor": 163863,
-      "numeroFactura": 202506003,
-      "metodoPagoNombre": "Crédito",
-      "clienteNombre": "Isabela Silva",
-      "fecha": "2025-06-05T23:15:09.273163"
-    },
-    {
-      "idVenta": 4,
-      "valor": 68544,
-      "numeroFactura": 202506004,
-      "metodoPagoNombre": "Crédito",
-      "clienteNombre": "Isabela Silva",
-      "fecha": "2025-06-06T02:06:01.3206625"
-    },
-    {
-      "idVenta": 6,
-      "valor": 369495,
-      "numeroFactura": 202506006,
-      "metodoPagoNombre": "Crédito",
-      "clienteNombre": "Isabela Silva",
-      "fecha": "2025-06-06T11:37:02.27911"
-    }
+  deudas: Deuda[] = [];
+
+   metodosPago: SimpleViewModel[] = [
+    { id: 1, nombre: 'Efectivo' },
+    { id: 2, nombre: 'Transferencia' }
   ];
+
+  constructor(private reporteService: ReportesService,
+    private dialog: MatDialog,
+    private messageService: MessageService // si usas PrimeNG
+  ) {
+  
+  }
 
   ngOnInit() {
     // Aquí podrías hacer la llamada al servicio para obtener las deudas
-    // this.loadDeudas();
+    this.loadDeudas();
   }
 
   getTotalDebt(): number {
@@ -71,24 +55,52 @@ export class ListadoDeudasComponent implements OnInit{
   }
 
   payDebt(deuda: Deuda) {
-    console.log('Registrar pago de deuda:', deuda);
-    // Implementar lógica para registrar pago
-  }
+  const dialogRef = this.dialog.open(PagoDeudasComponent, {
+    width: '500px',
+    data: { 
+      deuda: deuda, 
+      metodosPago: this.metodosPago 
+    }
+  });
+
+  dialogRef.afterClosed().subscribe((result: PagoDeuda) => {
+    if (result) {
+      this.reporteService.registrarPago(result).subscribe({
+        next: (res) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Pago registrado',
+            detail: res.mensaje
+          });
+
+          this.loadDeudas();
+        },
+        error: (err) => {
+          const mensaje = err.error?.mensaje || 'Error al registrar el pago';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: mensaje
+          });
+        }
+      });
+    }
+  });
+}
 
   printDebt(deuda: Deuda) {
     console.log('Imprimir deuda:', deuda);
     // Implementar lógica para imprimir
   }
 
-  // Método para cargar deudas desde el servicio
-  // private loadDeudas() {
-  //   this.debtService.getDeudas().subscribe({
-  //     next: (deudas) => {
-  //       this.deudas = deudas;
-  //     },
-  //     error: (error) => {
-  //       console.error('Error al cargar deudas:', error);
-  //     }
-  //   });
-  // }
+  private loadDeudas() {
+    this.reporteService.getDeudas().subscribe({
+      next: (deudas) => {
+        this.deudas = deudas;
+      },
+      error: (error) => {
+        console.error('Error al cargar deudas:', error);
+      }
+    });
+  }
 }

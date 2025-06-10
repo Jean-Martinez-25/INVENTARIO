@@ -4,79 +4,170 @@
             <h2 class="titulo-pages">
                 📄 Listado de Facturas Ventas
             </h2>
+            <div class="estadisticas-row">
+                <div class="estadistica-card">
+                    <span class="estadistica-valor">{{ facturas.length }}</span>
+                    <span class="estadistica-label">Total Facturas</span>
+                </div>
+                <div class="estadistica-card">
+                    <span class="estadistica-valor">{{ calcularTotalVentas() | currency:'COP':'symbol':'1.0-0' }}</span>
+                    <span class="estadistica-label">Total Ventas</span>
+                </div>
+                <div class="estadistica-card">
+                    <span class="estadistica-valor">{{ calcularVentasAltas() }}</span>
+                    <span class="estadistica-label">Ventas Altas</span>
+                </div>
+            </div>
         </div>
-        <p-card>
-            <p-table [value]="facturas" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'"
+
+        <p-card class="modern-card">
+            <p-table [value]="facturas" [paginator]="true" [rows]="rowsPerPage" [responsiveLayout]="'scroll'"
                 class="p-datatable-striped p-datatable-gridlines p-datatable-sm" styleClass="custom-table"
-                [globalFilterFields]="['numFactura', 'cliente']" #dt>
+                [globalFilterFields]="['numFactura', 'cliente', 'persona']" #dt [loading]="loading"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} facturas"
+                [rowsPerPageOptions]="[5, 10, 20, 50]">
 
                 <ng-template pTemplate="caption">
-                    <div class="flex justify-end">
-                        <span class="p-input-icon-left">
-                            <i class="pi pi-search"></i>
-                            <mat-form-field appearance="fill">
-                                <mat-label>Buscar...</mat-label>
-                                <input matInput (input)="onGlobalFilter($event)" placeholder="Buscar..." />
-                            </mat-form-field>
-                        </span>
+                    <div class="table-header">
+                        <div class="search-container">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter($event)"
+                                    placeholder="Buscar facturas..." class="search-input" />
+                            </span>
+                        </div>
+                        <div class="filter-container">
+                            <p-dropdown [options]="clienteOptions" [(ngModel)]="selectedCliente"
+                                placeholder="Filtrar por Cliente" (onChange)="filtrarPorCliente()" [showClear]="true"
+                                class="filter-dropdown">
+                            </p-dropdown>
+                            <p-calendar [(ngModel)]="fechaFiltro" placeholder="Filtrar por Fecha"
+                                (onSelect)="filtrarPorFecha()" [showIcon]="true" [showClear]="true"
+                                class="filter-calendar">
+                            </p-calendar>
+                            <button pButton type="button" icon="pi pi-refresh" class="p-button-outlined p-button-sm"
+                                (click)="limpiarFiltros()" pTooltip="Limpiar filtros">
+                            </button>
+                        </div>
                     </div>
                 </ng-template>
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="id" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-hashtag"></i> ID
+                        <th pSortableColumn="id" class="table-header-cell">
+                            <div class="header-content">
+                                <i class="pi pi-hashtag"></i>
+                                <span>ID</span>
+                            </div>
                             <p-sortIcon field="id"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="numFactura" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-file"></i> N° Factura
+                        <th pSortableColumn="numFactura" class="table-header-cell">
+                            <div class="header-content">
+                                <i class="pi pi-file"></i>
+                                <span>N° Factura</span>
+                            </div>
                             <p-sortIcon field="numFactura"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="valor" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-dollar"></i> Valor
+                        <th pSortableColumn="valor" class="table-header-cell">
+                            <div class="header-content">
+                                <i class="pi pi-dollar"></i>
+                                <span>Valor</span>
+                            </div>
                             <p-sortIcon field="valor"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="fecha" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-calendar"></i> Fecha
+                        <th pSortableColumn="fecha" class="table-header-cell">
+                            <div class="header-content">
+                                <i class="pi pi-calendar"></i>
+                                <span>Fecha</span>
+                            </div>
                             <p-sortIcon field="fecha"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="cliente" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-user"></i> Cliente
-                            <p-sortIcon field="cliente"></p-sortIcon>
+                        <th pSortableColumn="persona" class="table-header-cell">
+                            <div class="header-content">
+                                <i class="pi pi-user"></i>
+                                <span>Cliente</span>
+                            </div>
+                            <p-sortIcon field="persona"></p-sortIcon>
                         </th>
-                        <th style="background-color: #0b1a2c; color: white;">Acciones</th>
+                        <th class="table-header-cell actions-header">
+                            <div class="header-content">
+                                <i class="pi pi-cog"></i>
+                                <span>Acciones</span>
+                            </div>
+                        </th>
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-factura>
+                <ng-template pTemplate="body" let-factura let-rowIndex="rowIndex">
+                    <tr class="table-row" [class.highlighted-row]="isVentaAlta(factura.valor)">
+                        <td class="table-cell">
+                            <span class="cell-content">{{ factura.id }}</span>
+                        </td>
+                        <td class="table-cell">
+                            <div class="factura-number">
+                                <i class="pi pi-file-o"></i>
+                                <span>{{ factura.numFactura }}</span>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="valor-container">
+                                <span class="valor-badge" [ngClass]="getValorClass(factura.valor)">
+                                    {{ factura.valor | currency:'COP':'symbol':'1.0-0' }}
+                                </span>
+                                <i class="pi" [ngClass]="getValorIconClass(factura.valor)"></i>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="fecha-container">
+                                <i class="pi pi-calendar-plus"></i>
+                                <span>{{ factura.fecha | date:'dd/MM/yyyy' }}</span>
+                                <small class="fecha-relativa">{{ obtenerFechaRelativa(factura.fecha) }}</small>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="cliente-info">
+                                <div class="cliente-avatar">
+                                    {{ obtenerIniciales(factura.persona) }}
+                                </div>
+                                <span class="cliente-nombre">{{ factura.persona }}</span>
+                            </div>
+                        </td>
+                        <td class="table-cell">
+                            <div class="actions-container">
+                                <button pButton type="button" icon="pi pi-eye"
+                                    class="p-button-rounded p-button-sm p-button-text action-button view-button"
+                                    (click)="verFactura(factura.numFactura)" pTooltip="Ver detalles de la factura">
+                                </button>
+                                <button pButton type="button" icon="pi pi-download"
+                                    class="p-button-rounded p-button-sm p-button-text action-button download-button"
+                                    (click)="descargarFactura(factura.numFactura)" pTooltip="Descargar factura">
+                                </button>
+                                <button pButton type="button" icon="pi pi-send"
+                                    class="p-button-rounded p-button-sm p-button-text action-button send-button"
+                                    (click)="enviarFactura(factura.numFactura)" pTooltip="Enviar por email">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td>{{ factura.id }}</td>
-                        <td>{{ factura.numFactura }}</td>
-                        <td>
-                            <span [ngClass]="{
-                    'text-green-700': factura.valor <= 100000,
-                    'text-red-600 font-bold': factura.valor > 100000
-                }">
-                                {{ factura.valor | currency:'COP':'symbol':'1.0-0' }}
-                            </span>
+                        <td colspan="6" class="empty-message">
+                            <div class="empty-state">
+                                <i class="pi pi-inbox empty-icon"></i>
+                                <h3>No hay facturas disponibles</h3>
+                                <p>No se encontraron facturas que coincidan con los criterios de búsqueda.</p>
+                            </div>
                         </td>
-                        <td>{{ factura.fecha | date:'fullDate' }}</td>
-                        <td>{{ factura.persona }}</td>
-                        <td>
-                            <button pButton type="button" icon="pi pi-eye"
-                                class="p-button-rounded p-button-sm p-button-text custom-eye-button"
-                                (click)="verFactura(factura.numFactura)">
-                            </button>
-                        </td>
-                        
-
-
                     </tr>
                 </ng-template>
             </p-table>
         </p-card>
     </div>
 </div>
+
 <div>
     <app-listado-compras></app-listado-compras>
 </div>

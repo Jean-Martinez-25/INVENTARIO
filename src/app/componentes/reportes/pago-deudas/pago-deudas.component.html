@@ -1,0 +1,104 @@
+<div class="modal-header">
+    <h2 mat-dialog-title>
+        <mat-icon>payment</mat-icon>
+        Registrar Pago de Deuda
+    </h2>
+    <button mat-icon-button mat-dialog-close class="close-button">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content class="modal-content">
+    <!-- Información de la deuda -->
+    <mat-card class="debt-info-card">
+        <mat-card-header>
+            <mat-card-title>Información de la Deuda</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="debt-details">
+                <div class="detail-row">
+                    <span class="label">Factura:</span>
+                    <span class="value">#{{ data.deuda.numeroFactura }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Cliente:</span>
+                    <span class="value">{{ data.deuda.clienteNombre }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Valor Original:</span>
+                    <span class="value amount">{{ data.deuda.valor | currency:'COP':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Fecha:</span>
+                    <span class="value">{{ formatDate(data.deuda.fecha) }}</span>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-divider></mat-divider>
+
+    <!-- Formulario de pago -->
+    <form [formGroup]="paymentForm" class="payment-form">
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Método de Pago</mat-label>
+                <mat-select formControlName="metodoPagoId" required>
+                    <mat-option *ngFor="let metodo of data.metodosPago" [value]="metodo.id">
+                        {{ metodo.nombre }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="paymentForm.get('metodoPagoId')?.hasError('required')">
+                    Método de pago es requerido
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Valor a Pagar</mat-label>
+                <input matInput type="number" formControlName="valorPago" [max]="data.deuda.valor" min="1"
+                    placeholder="0" required>
+                <span matPrefix>$&nbsp;</span>
+                <mat-error *ngIf="paymentForm.get('valorPago')?.hasError('required')">
+                    El valor es requerido
+                </mat-error>
+                <mat-error *ngIf="paymentForm.get('valorPago')?.hasError('min')">
+                    El valor debe ser mayor a 0
+                </mat-error>
+                <mat-error *ngIf="paymentForm.get('valorPago')?.hasError('max')">
+                    El valor no puede ser mayor a la deuda
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Resumen del pago -->
+        <mat-card class="payment-summary" *ngIf="paymentForm.get('valorPago')?.value > 0">
+            <mat-card-content>
+                <div class="summary-row">
+                    <span>Valor a pagar:</span>
+                    <span class="amount">{{ paymentForm.get('valorPago')?.value | currency:'COP':'symbol':'1.0-0'
+                        }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Saldo restante:</span>
+                    <span class="amount" [class.paid-off]="getRemainingBalance() === 0">
+                        {{ getRemainingBalance() | currency:'COP':'symbol':'1.0-0' }}
+                    </span>
+                </div>
+                <div class="summary-row" *ngIf="getRemainingBalance() === 0">
+                    <mat-icon color="primary" class="check-icon">check_circle</mat-icon>
+                    <span class="paid-message">¡Deuda completamente pagada!</span>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="modal-actions">
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!paymentForm.valid">
+        <mat-icon>save</mat-icon>
+        Registrar Pago
+    </button>
+</mat-dialog-actions>

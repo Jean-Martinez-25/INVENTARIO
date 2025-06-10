@@ -38,6 +38,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { TagModule } from 'primeng/tag';
+import { PagoDeudasComponent } from './pago-deudas/pago-deudas.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 @NgModule({
   declarations: [
     ReportesComponent,
@@ -49,7 +53,8 @@ import { TagModule } from 'primeng/tag';
     CierreDeCajaMensualComponent,
     ListadoComprasComponent,
     ListadoVentasComponent,
-    ListadoDeudasComponent
+    ListadoDeudasComponent,
+    PagoDeudasComponent
   ],
   imports: [
     CommonModule,
@@ -78,10 +83,14 @@ import { TagModule } from 'primeng/tag';
     MatPaginatorModule,
     MatSortModule,
     TagModule,
+    MatDialogModule,
+    CommonModule,
+    ToastModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-CO' },
-    DialogService
+    DialogService,
+    MessageService
   ]
 })
 export class ReportesModule { }
