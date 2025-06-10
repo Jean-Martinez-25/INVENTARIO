@@ -1,17 +1,27 @@
+// estados-de-cuenta.component.ts
 import { Component, OnInit } from '@angular/core';
-import { MetodoPagoData } from '../../../interfaces/reportes/reporte-back';
+import { MetodoPagoData, ResumenGeneralDTO } from '../../../interfaces/reportes/reporte-back';
 import { PrimeIcons } from 'primeng/api';
 import { ReportesService } from '../../../servicios/reportes/reportes.service';
 
 interface CustomMeterGroupItem {
   label: string;
-  color1: string; // Primer color para el degradado o color de fondo
-  color2: string; // Segundo color para el degradado
-  value: number; // Será el porcentaje para la barra
-  icon: string; // Icono de PrimeIcons
-  // Puedes añadir más propiedades si las necesitas, como el totalValor original o cantidadTransacciones
+  color1: string;
+  color2: string;
+  value: number;
+  icon: string;
   totalValorOriginal: number;
   cantidadTransaccionesOriginal: number;
+}
+
+interface MetodoDetalle {
+  metodo: string;
+  ventas: { valor: number; transacciones: number };
+  compras: { valor: number; transacciones: number };
+  ingresos: number;
+  balance: number;
+  color: string;
+  icon: string;
 }
 
 @Component({
@@ -21,16 +31,33 @@ interface CustomMeterGroupItem {
 })
 export class EstadosDeCuentaComponent implements OnInit {
   backendData!: MetodoPagoData[];
+  resumen: ResumenGeneralDTO | null = null;
+  
+  meterGroupDisplayValues: CustomMeterGroupItem[] = [];
+  totalGeneral: number = 0;
+  
+  // Nuevas propiedades para el dashboard mejorado
+  metodosDetalle: MetodoDetalle[] = [];
+  balanceNeto: number = 0;
 
-  meterGroupDisplayValues: CustomMeterGroupItem[] = []; // Usaremos esta nueva estructura
-  totalGeneral: number = 0; // Para calcular el total y los porcentajes
+  // Configuración de colores e iconos
+  private colorMap: { [key: string]: string } = {
+    'Efectivo': '#4CAF50',
+    'Transferencia': '#FFC107',
+    'Crédito': '#2196F3'
+  };
 
-  constructor(private service: ReportesService) {
+  private iconMap: { [key: string]: string } = {
+    'Efectivo': 'fas fa-money-bill-wave',
+    'Transferencia': 'fas fa-wallet',
+    'Crédito': 'fas fa-credit-card'
+  };
 
-  }
+  constructor(private service: ReportesService) {}
 
   ngOnInit(): void {
     this.obtenerEstadosCuenta();
+    this.obtenerTotales();
   }
 
   obtenerEstadosCuenta(): void {
@@ -39,82 +66,140 @@ export class EstadosDeCuentaComponent implements OnInit {
         this.backendData = data;
         this.calculateDisplayValues();
       }
-    })
+    });
+  }
+
+  obtenerTotales(): void {
+    this.service.obtenerTotalesDeCuenta().subscribe({
+      next: (data) => {
+        this.resumen = data;
+        console.log(this.resumen);
+        this.procesarDatosResumen();
+      }
+    });
   }
 
   calculateDisplayValues(): void {
-    // 1. Calcular la suma absoluta de todos los valores para usar como base de porcentaje
     const totalAbsoluto = this.backendData.reduce((sum, item) => sum + Math.abs(item.totalValor), 0);
 
-    // 2. Mapear backendData a meterGroupDisplayValues
     this.meterGroupDisplayValues = this.backendData.map(item => {
       const porcentaje = totalAbsoluto > 0 ? (Math.abs(item.totalValor) / totalAbsoluto) * 100 : 0;
-      let color1: string = '';
-      let color2: string = '';
-      let icon: string = '';
-
-      // Asigna colores e íconos basados en el método de pago
-      switch (item.metodoPago) {
-        case 'Efectivo':
-          color1 = '#4CAF50'; // Verde
-          color2 = '#81C784';
-          icon = PrimeIcons.MONEY_BILL;
-          break;
-        case 'Crédito':
-          color1 = '#2196F3'; // Azul
-          color2 = '#64B5F6';
-          icon = PrimeIcons.CREDIT_CARD;
-          break;
-        case 'Transferencia':
-          color1 = '#FFC107'; // Amarillo
-          color2 = '#FFD54F';
-          icon = PrimeIcons.WALLET;
-          break;
-        default:
-          color1 = '#9E9E9E'; // Gris
-          color2 = '#BDBDBD';
-          icon = PrimeIcons.QUESTION;
-          break;
-      }
+      const color1 = this.colorMap[item.metodoPago] || '#9E9E9E';
+      const icon = this.getIconClass(this.iconMap[item.metodoPago] || 'fas fa-question-circle');
 
       return {
         label: item.metodoPago,
         color1: color1,
-        color2: color2,
-        value: parseFloat(porcentaje.toFixed(2)), // valor siempre positivo
+        color2: this.lightenColor(color1, 20),
+        value: parseFloat(porcentaje.toFixed(2)),
         icon: icon,
-        totalValorOriginal: item.totalValor, // aquí sí puede ser negativo
+        totalValorOriginal: item.totalValor,
         cantidadTransaccionesOriginal: item.cantidadTransacciones
       };
     });
   }
-  getCardClass(metodoPago: string): string {
-  switch (metodoPago.toLowerCase()) {
-    case 'efectivo':
-      return 'efectivo';
-    case 'crédito':
-    case 'credito':
-      return 'credito';
-    case 'transferencia':
-      return 'transferencia';
-    default:
-      return 'efectivo'; // clase por defecto
-  }
-}
 
-getIconClass(primeIcon: string): string {
-  // Mapea los iconos de PrimeNG a Font Awesome
-  switch (primeIcon) {
-    case 'pi pi-money-bill':
-      return 'fas fa-money-bill-wave';
-    case 'pi pi-credit-card':
-      return 'fas fa-credit-card';
-    case 'pi pi-wallet':
-      return 'fas fa-wallet';
-    case 'pi pi-question':
-      return 'fas fa-question-circle';
-    default:
-      return 'fas fa-question-circle';
+  // Nuevo método para procesar datos del resumen
+  procesarDatosResumen(): void {
+    if (!this.resumen) return;
+
+    this.balanceNeto = this.resumen.valorTotalVentas - this.resumen.valorTotalCompras;
+    
+    // Crear array de métodos únicos
+    const metodosUnicos = new Set<string>();
+    
+    this.resumen.detalleVentas?.forEach(v => metodosUnicos.add(v.nombreMetodoPago));
+    this.resumen.detalleCompras?.forEach(c => metodosUnicos.add(c.nombreMetodoPago));
+    this.resumen.ingresosPorMetodoPago?.forEach(i => metodosUnicos.add(i.nombreMetodoPago));
+
+    // Procesar detalles por método
+    this.metodosDetalle = Array.from(metodosUnicos).map(metodo => {
+      const venta = this.resumen!.detalleVentas?.find(v => v.nombreMetodoPago === metodo);
+      const compra = this.resumen!.detalleCompras?.find(c => c.nombreMetodoPago === metodo);
+      const ingreso = this.resumen!.ingresosPorMetodoPago?.find(i => i.nombreMetodoPago === metodo);
+
+      const ventaValor = venta?.totalValor || 0;
+      const compraValor = compra?.totalValor || 0;
+
+      return {
+        metodo,
+        ventas: {
+          valor: ventaValor,
+          transacciones: venta?.totalTransacciones || 0
+        },
+        compras: {
+          valor: compraValor,
+          transacciones: compra?.totalTransacciones || 0
+        },
+        ingresos: ingreso?.totalIngresado || 0,
+        balance: ventaValor - compraValor,
+        color: this.colorMap[metodo] || '#9E9E9E',
+        icon: this.iconMap[metodo] || 'fas fa-question-circle'
+      };
+    });
   }
-}
+
+  // Métodos auxiliares
+  private lightenColor(color: string, percent: number): string {
+    const num = parseInt(color.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+  }
+
+  getCardClass(metodoPago: string): string {
+    switch (metodoPago.toLowerCase()) {
+      case 'efectivo':
+        return 'efectivo';
+      case 'crédito':
+      case 'credito':
+        return 'credito';
+      case 'transferencia':
+        return 'transferencia';
+      default:
+        return 'efectivo';
+    }
+  }
+
+  getIconClass(primeIcon: string): string {
+    switch (primeIcon) {
+      case 'pi pi-money-bill':
+        return 'fas fa-money-bill-wave';
+      case 'pi pi-credit-card':
+        return 'fas fa-credit-card';
+      case 'pi pi-wallet':
+        return 'fas fa-wallet';
+      case 'pi pi-question':
+        return 'fas fa-question-circle';
+      default:
+        return primeIcon; // Ya viene con el formato correcto
+    }
+  }
+
+  // Métodos para obtener emoji por método
+  getEmojiForMetodo(metodo: string): string {
+    switch (metodo) {
+      case 'Efectivo': return '💵';
+      case 'Transferencia': return '🏦';
+      case 'Crédito': return '💳';
+      default: return '❓';
+    }
+  }
+
+  // Métodos para obtener el porcentaje de un método específico
+  getPorcentajeVentas(metodo: string): number {
+    if (!this.resumen) return 0;
+    const detalle = this.resumen.detalleVentas?.find(v => v.nombreMetodoPago === metodo);
+    return detalle ? (detalle.totalValor / this.resumen.valorTotalVentas) * 100 : 0;
+  }
+
+  getPorcentajeCompras(metodo: string): number {
+    if (!this.resumen) return 0;
+    const detalle = this.resumen.detalleCompras?.find(c => c.nombreMetodoPago === metodo);
+    return detalle ? (detalle.totalValor / this.resumen.valorTotalCompras) * 100 : 0;
+  }
 }

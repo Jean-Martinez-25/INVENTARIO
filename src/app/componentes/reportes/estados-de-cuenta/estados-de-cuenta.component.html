@@ -2,14 +2,97 @@
     <div class="content container">
         <div class="header">
             <h1 class="titulo-principal">📊 Estados de Cuenta</h1>
-            <p class="subtitulo">Resumen detallado de métodos de pago y transacciones</p>
+            <p class="subtitulo">Dashboard Financiero Completo</p>
         </div>
 
+        <!-- NUEVAS CARDS DE RESUMEN PRINCIPAL -->
+        <div class="resumen-principal" *ngIf="resumen">
+            <div class="grid-resumen">
+                <div class="card-resumen ventas">
+                    <div class="card-content">
+                        <div class="card-info">
+                            <h3>Total Ventas</h3>
+                            <p class="valor-principal">{{ resumen.valorTotalVentas | currency:'COP':'symbol':'1.0-0' }}</p>
+                            <p class="detalle">{{ resumen.totalVentas }} transacciones</p>
+                        </div>
+                        <div class="card-icon">📈</div>
+                    </div>
+                </div>
+
+                <div class="card-resumen compras">
+                    <div class="card-content">
+                        <div class="card-info">
+                            <h3>Total Compras</h3>
+                            <p class="valor-principal">{{ resumen.valorTotalCompras | currency:'COP':'symbol':'1.0-0' }}</p>
+                            <p class="detalle">{{ resumen.totalCompras }} transacciones</p>
+                        </div>
+                        <div class="card-icon">📉</div>
+                    </div>
+                </div>
+
+                <div class="card-resumen pagos-credito">
+                    <div class="card-content">
+                        <div class="card-info">
+                            <h3>Pagos Crédito</h3>
+                            <p class="valor-principal">{{ resumen.totalPagosCredito | currency:'COP':'symbol':'1.0-0' }}</p>
+                            <p class="detalle">En efectivo</p>
+                        </div>
+                        <div class="card-icon">💳</div>
+                    </div>
+                </div>
+
+                <div class="card-resumen balance" [ngClass]="balanceNeto >= 0 ? 'positivo' : 'negativo'">
+                    <div class="card-content">
+                        <div class="card-info">
+                            <h3>Balance Neto</h3>
+                            <p class="valor-principal">{{ balanceNeto | currency:'COP':'symbol':'1.0-0' }}</p>
+                            <p class="detalle">{{ balanceNeto >= 0 ? 'Ganancia' : 'Pérdida' }}</p>
+                        </div>
+                        <div class="card-icon">💰</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE GRÁFICOS MEJORADA -->
+        <div class="graficos-section" *ngIf="resumen">
+            <div class="graficos-grid">
+                <!-- Gráfico de Ventas -->
+                <div class="grafico-container">
+                    <h3 class="grafico-titulo">📊 Distribución de Ventas</h3>
+                    <div class="pie-chart-placeholder">
+                        <div class="chart-items">
+                            <div class="chart-item" *ngFor="let detalle of resumen.detalleVentas">
+                                <div class="chart-indicator" [style.background-color]="detalle.nombreMetodoPago || '#9E9E9E'"></div>
+                                <span class="chart-label">{{ detalle.nombreMetodoPago }}</span>
+                                <span class="chart-value">{{ getPorcentajeVentas(detalle.nombreMetodoPago) | number:'1.1-1' }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Compras -->
+                <div class="grafico-container">
+                    <h3 class="grafico-titulo">🛒 Distribución de Compras</h3>
+                    <div class="pie-chart-placeholder">
+                        <div class="chart-items">
+                            <div class="chart-item" *ngFor="let detalle of resumen.detalleCompras">
+                                <div class="chart-indicator" [style.background-color]="detalle.nombreMetodoPago || '#9E9E9E'"></div>
+                                <span class="chart-label">{{ detalle.nombreMetodoPago }}</span>
+                                <span class="chart-value">{{ getPorcentajeCompras(detalle.nombreMetodoPago) | number:'1.1-1' }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA ORIGINAL (MANTENIDA) -->
         <div class="tabla-container">
             <div class="tabla-header">
                 <h3 class="tabla-titulo">
                     <i class="fas fa-table"></i>
-                    Métodos de Pago
+                    Métodos de Pago (Datos Originales)
                 </h3>
             </div>
             <div class="tabla-content">
@@ -41,10 +124,61 @@
             </div>
         </div>
 
+        <!-- DETALLE POR MÉTODO DE PAGO (NUEVO) -->
+        <div class="detalle-metodos" *ngIf="metodosDetalle.length > 0">
+            <h3 class="seccion-titulo">💼 Detalle por Método de Pago</h3>
+            <div class="metodos-grid">
+                <div class="metodo-card" *ngFor="let metodo of metodosDetalle" 
+                     [style.border-top-color]="metodo.color">
+                    
+                    <div class="metodo-header">
+                        <div class="metodo-emoji">{{ getEmojiForMetodo(metodo.metodo) }}</div>
+                        <h4>{{ metodo.metodo }}</h4>
+                    </div>
+
+                    <div class="metodo-stats">
+                        <!-- Ventas -->
+                        <div class="stat-item ventas" *ngIf="metodo.ventas.valor > 0">
+                            <div class="stat-label">Ventas</div>
+                            <div class="stat-values">
+                                <div class="stat-value">{{ metodo.ventas.valor | currency:'COP':'symbol':'1.0-0' }}</div>
+                                <div class="stat-detail">{{ metodo.ventas.transacciones }} transacciones</div>
+                            </div>
+                        </div>
+
+                        <!-- Compras -->
+                        <div class="stat-item compras" *ngIf="metodo.compras.valor > 0">
+                            <div class="stat-label">Compras</div>
+                            <div class="stat-values">
+                                <div class="stat-value">{{ metodo.compras.valor | currency:'COP':'symbol':'1.0-0' }}</div>
+                                <div class="stat-detail">{{ metodo.compras.transacciones }} transacciones</div>
+                            </div>
+                        </div>
+
+                        <!-- Ingresos -->
+                        <div class="stat-item ingresos" *ngIf="metodo.ingresos > 0">
+                            <div class="stat-label">Ingresos</div>
+                            <div class="stat-values">
+                                <div class="stat-value">{{ metodo.ingresos | currency:'COP':'symbol':'1.0-0' }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Balance -->
+                        <div class="stat-item balance" [ngClass]="metodo.balance >= 0 ? 'positivo' : 'negativo'">
+                            <div class="stat-label">Balance</div>
+                            <div class="stat-values">
+                                <div class="stat-value">{{ metodo.balance | currency:'COP':'symbol':'1.0-0' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARDS ORIGINALES (MANTENIDAS) -->
         <div class="cards-grid">
             <div class="payment-card fade-in" *ngFor="let item of meterGroupDisplayValues; let i = index"
                 [ngClass]="getCardClass(item.label)" [style.animation-delay]="(i * 0.1) + 's'">
-
                 <div class="card-header">
                     <div class="card-icon-container">
                         <i [class]="getIconClass(item.icon)" class="card-icon"></i>
@@ -56,18 +190,15 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="progress-bar">
                     <div class="progress-fill" [style.--progress-width]="item.value + '%'"
                         [style.width]="item.value + '%'">
                     </div>
                 </div>
-
                 <div class="card-details">
                     <div class="detail-item">
                         <span class="detail-label">Total:</span>
-                        <span class="detail-value">{{ item.totalValorOriginal | currency:'USD':'symbol':'1.0-0'
-                            }}</span>
+                        <span class="detail-value">{{ item.totalValorOriginal | currency:'COP':'symbol':'1.0-0' }}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Transacciones:</span>

@@ -6,6 +6,12 @@ import { PagoDeudasComponent } from '../pago-deudas/pago-deudas.component';
 import { Deuda, PagoDeuda } from '../../../interfaces/venta/deudas';
 import { MessageService } from 'primeng/api';
 
+interface ClienteDeudas {
+  nombre: string;
+  totalDeuda: number;
+  cantidadFacturas: number;
+  deudas: Deuda[];
+}
 @Component({
   selector: 'app-listado-deudas',
   templateUrl: './listado-deudas.component.html',
@@ -13,8 +19,8 @@ import { MessageService } from 'primeng/api';
 })
 export class ListadoDeudasComponent implements OnInit{
   deudas: Deuda[] = [];
-
-   metodosPago: SimpleViewModel[] = [
+  clientesAgrupados: ClienteDeudas[] = [];
+  metodosPago: SimpleViewModel[] = [
     { id: 1, nombre: 'Efectivo' },
     { id: 2, nombre: 'Transferencia' }
   ];
@@ -97,10 +103,35 @@ export class ListadoDeudasComponent implements OnInit{
     this.reporteService.getDeudas().subscribe({
       next: (deudas) => {
         this.deudas = deudas;
+        this.agruparDeudasPorCliente();
       },
       error: (error) => {
         console.error('Error al cargar deudas:', error);
       }
     });
+  }
+   private agruparDeudasPorCliente() {
+    const clientesMap = new Map<string, ClienteDeudas>();
+
+    this.deudas.forEach(deuda => {
+      const nombreCliente = deuda.clienteNombre;
+      
+      if (clientesMap.has(nombreCliente)) {
+        const cliente = clientesMap.get(nombreCliente)!;
+        cliente.totalDeuda += deuda.valor;
+        cliente.cantidadFacturas++;
+        cliente.deudas.push(deuda);
+      } else {
+        clientesMap.set(nombreCliente, {
+          nombre: nombreCliente,
+          totalDeuda: deuda.valor,
+          cantidadFacturas: 1,
+          deudas: [deuda]
+        });
+      }
+    });
+
+    this.clientesAgrupados = Array.from(clientesMap.values())
+      .sort((a, b) => b.totalDeuda - a.totalDeuda); // Ordenar por mayor deuda
   }
 }

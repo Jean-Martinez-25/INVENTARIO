@@ -127,6 +127,63 @@
                         </tr>
                     </ng-template>
                 </p-table>
+                <div class="clients-grid">
+                    <mat-card class="client-card" *ngFor="let cliente of clientesAgrupados">
+                        <mat-card-header class="client-header">
+                            <div mat-card-avatar class="client-avatar-large">
+                                <mat-icon>account_circle</mat-icon>
+                            </div>
+                            <mat-card-title class="client-name">{{ cliente.nombre }}</mat-card-title>
+                            <mat-card-subtitle class="client-stats">
+                                {{ cliente.cantidadFacturas }} {{ cliente.cantidadFacturas === 1 ? 'factura' : 'facturas' }} pendiente{{ cliente.cantidadFacturas === 1 ? '' : 's' }}
+                            </mat-card-subtitle>
+                        </mat-card-header>
+
+                        <mat-card-content class="client-content">
+                            <div class="client-total">
+                                <span class="total-label">Total adeudado:</span>
+                                <span class="total-amount">{{ cliente.totalDeuda | currency:'COP':'symbol':'1.0-0' }}</span>
+                            </div>
+
+                            <div class="invoices-section">
+                                <h4 class="invoices-title">
+                                    <mat-icon>receipt</mat-icon>
+                                    Facturas Pendientes
+                                </h4>
+                                
+                                <div class="invoices-list">
+                                    <div class="invoice-item" *ngFor="let deuda of cliente.deudas">
+                                        <div class="invoice-info">
+                                            <span class="invoice-number">#{{ deuda.numeroFactura }}</span>
+                                            <span class="invoice-date">{{ formatDate(deuda.fecha) }}</span>
+                                        </div>
+                                        <div class="invoice-details">
+                                            <span class="invoice-amount">{{ deuda.valor | currency:'COP':'symbol':'1.0-0' }}</span>
+                                            <p-tag [value]="deuda.metodoPagoNombre" severity="warning" class="invoice-method"></p-tag>
+                                        </div>
+                                        <div class="invoice-actions">
+                                            <p-button icon="pi pi-eye" 
+                                                styleClass="p-button-rounded p-button-text p-button-sm p-button-info"
+                                                pTooltip="Ver detalles" 
+                                                (onClick)="viewDebt(deuda)">
+                                            </p-button>
+                                            <p-button icon="pi pi-dollar" 
+                                                styleClass="p-button-rounded p-button-text p-button-sm p-button-success"
+                                                pTooltip="Registrar pago" 
+                                                (onClick)="payDebt(deuda)">
+                                            </p-button>
+                                            <p-button icon="pi pi-print" 
+                                                styleClass="p-button-rounded p-button-text p-button-sm p-button-secondary"
+                                                pTooltip="Imprimir" 
+                                                (onClick)="printDebt(deuda)">
+                                            </p-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
             </p-card>
         </div>
     </div>

@@ -58,3 +58,26 @@ export interface CierreCajaData {
   totalVentasGeneralMesActual: number;
   gananciasDelMesActual: number;
 }
+
+export interface ResumenMetodoPagoDTO {
+  nombreMetodoPago: string;
+  totalTransacciones: number;
+  totalValor: number;
+}
+
+export interface IngresoMetodoPagoDTO {
+  nombreMetodoPago: string;
+  totalIngresado: number;
+}
+
+export interface ResumenGeneralDTO {
+  totalCompras: number;
+  valorTotalCompras: number;
+  detalleCompras: ResumenMetodoPagoDTO[];
+  totalVentas: number;
+  valorTotalVentas: number;
+  detalleVentas: ResumenMetodoPagoDTO[];
+  totalPagosCredito: number;
+  detallePagosCredito: ResumenMetodoPagoDTO[];
+  ingresosPorMetodoPago: IngresoMetodoPagoDTO[];
+}

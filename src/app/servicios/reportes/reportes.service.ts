@@ -5,7 +5,8 @@ import {
   ReporteSemanal,
   ResumenCierreCaja,
   ReporteBack,
-  ReporteMensual
+  ReporteMensual,
+  ResumenGeneralDTO
 } from './../../interfaces/reportes/reporte-back';
 import { Injectable } from '@angular/core';
 import { environment } from '../../envrioment/envrioment';
@@ -75,6 +76,10 @@ export class ReportesService {
 
   obtenerEstadosDeCuenta(): Observable<MetodoPagoData[]> {
     return this.http.get<MetodoPagoData[]>(`${this.webApi}${this.api}/estados-de-cuenta`);
+  }
+
+  obtenerTotalesDeCuenta(): Observable<ResumenGeneralDTO> {
+    return this.http.get<ResumenGeneralDTO>(`${this.webApi}${this.api}/total-compras-ventas`);
   }
 
   obtenerCierreCaja(idMes: number, year: number): Observable<any> {
