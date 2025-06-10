@@ -6,6 +6,7 @@ import { ResumenComponent } from './resumen/resumen.component';
 import { CierresDeCajaComponent } from './cierres-de-caja/cierres-de-caja.component';
 import { EstadosDeCuentaComponent } from './estados-de-cuenta/estados-de-cuenta.component';
 import { CierreDeCajaMensualComponent } from './cierre-de-caja-mensual/cierre-de-caja-mensual.component';
+import { ListadoDeudasComponent } from './listado-deudas/listado-deudas.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,8 @@ const routes: Routes = [
       {path: 'resumen', component: ResumenComponent},
       {path: 'cierre-de-caja-diario', component: CierresDeCajaComponent},
       {path: 'cierre-de-caja-mensual', component: CierreDeCajaMensualComponent},
-      {path: 'estados-de-cuenta', component: EstadosDeCuentaComponent}
+      {path: 'estados-de-cuenta', component: EstadosDeCuentaComponent},
+      {path: 'deudas-clientes', component: ListadoDeudasComponent}
     ]
   }
 ];

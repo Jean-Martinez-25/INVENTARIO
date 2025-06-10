@@ -18,7 +18,8 @@ export class MenuComponent {
         { label: 'Estadísticas', route: '/reportes/reportes' },
         { label: 'Cierre de Caja', route: '/reportes/cierre-de-caja-diario' },
         { label: 'Cierre de Caja Mensual', route: '/reportes/cierre-de-caja-mensual' },
-        { label: 'Estados de cuenta', route: '/reportes/estados-de-cuenta'}
+        { label: 'Estados de cuenta', route: '/reportes/estados-de-cuenta'},
+        { label: 'Deudas', route: '/reportes/deudas-clientes'}
       ]
     },
     {

@@ -1,0 +1,133 @@
+<div class="table">
+    <div class="content">
+        <div class="debt-container">
+            <!-- Header -->
+            <mat-toolbar color="primary" class="toolbar-header">
+                <mat-icon>credit_card</mat-icon>
+                <span class="toolbar-title">Gestión de Deudas</span>
+                <span class="spacer"></span>
+                <span class="total-debt">Total: {{ getTotalDebt() | currency:'COP':'symbol':'1.0-0' }}</span>
+            </mat-toolbar>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <mat-card class="stat-card">
+                    <mat-card-content>
+                        <div class="stat-content">
+                            <mat-icon class="stat-icon debt-icon">account_balance_wallet</mat-icon>
+                            <div class="stat-info">
+                                <h3>{{ deudas.length }}</h3>
+                                <p>Total Deudas</p>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card class="stat-card">
+                    <mat-card-content>
+                        <div class="stat-content">
+                            <mat-icon class="stat-icon amount-icon">attach_money</mat-icon>
+                            <div class="stat-info">
+                                <h3>{{ getTotalDebt() | currency:'COP':'symbol':'1.0-0' }}</h3>
+                                <p>Monto Total</p>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card class="stat-card">
+                    <mat-card-content>
+                        <div class="stat-content">
+                            <mat-icon class="stat-icon client-icon">person</mat-icon>
+                            <div class="stat-info">
+                                <h3>{{ getUniqueClients() }}</h3>
+                                <p>Clientes</p>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <!-- PrimeNG Table -->
+            <p-card header="Listado de Deudas Pendientes" class="table-card">
+                <p-table [value]="deudas" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} registros"
+                    [rowsPerPageOptions]="[5, 10, 20]" styleClass="p-datatable-striped p-datatable-gridlines"
+                    responsiveLayout="scroll">
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="numeroFactura">
+                                Factura <p-sortIcon field="numeroFactura"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="clienteNombre">
+                                Cliente <p-sortIcon field="clienteNombre"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="valor">
+                                Valor <p-sortIcon field="valor"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="metodoPagoNombre">
+                                Método Pago
+                            </th>
+                            <th pSortableColumn="fecha">
+                                Fecha <p-sortIcon field="fecha"></p-sortIcon>
+                            </th>
+                            <th>Acciones</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-deuda>
+                        <tr>
+                            <td>
+                                <span class="invoice-number">#{{ deuda.numeroFactura }}</span>
+                            </td>
+                            <td>
+                                <div class="client-info">
+                                    <mat-icon class="client-avatar">account_circle</mat-icon>
+                                    <span>{{ deuda.clienteNombre }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="amount-value">{{ deuda.valor | currency:'COP':'symbol':'1.0-0' }}</span>
+                            </td>
+                            <td>
+                                <p-tag [value]="deuda.metodoPagoNombre" severity="warning" icon="pi pi-credit-card">
+                                </p-tag>
+                            </td>
+                            <td>
+                                <span class="date-value">{{ formatDate(deuda.fecha) }}</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <p-button icon="pi pi-eye" styleClass="p-button-rounded p-button-text p-button-info"
+                                        pTooltip="Ver detalles" (onClick)="viewDebt(deuda)">
+                                    </p-button>
+                                    <p-button icon="pi pi-dollar"
+                                        styleClass="p-button-rounded p-button-text p-button-success"
+                                        pTooltip="Registrar pago" (onClick)="payDebt(deuda)">
+                                    </p-button>
+                                    <p-button icon="pi pi-print"
+                                        styleClass="p-button-rounded p-button-text p-button-secondary"
+                                        pTooltip="Imprimir" (onClick)="printDebt(deuda)">
+                                    </p-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                <div class="empty-state">
+                                    <mat-icon class="empty-icon">inbox</mat-icon>
+                                    <h3>No hay deudas pendientes</h3>
+                                    <p>¡Excelente! No tienes deudas por cobrar en este momento.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-card>
+        </div>
+    </div>
+</div>

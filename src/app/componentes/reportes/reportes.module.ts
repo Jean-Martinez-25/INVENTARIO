@@ -32,6 +32,12 @@ import { CalendarModule } from 'primeng/calendar';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ListadoComprasComponent } from './listado-compras/listado-compras.component';
 import { ListadoVentasComponent } from './listado-ventas/listado-ventas.component';
+import { ListadoDeudasComponent } from './listado-deudas/listado-deudas.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { TagModule } from 'primeng/tag';
 @NgModule({
   declarations: [
     ReportesComponent,
@@ -42,7 +48,8 @@ import { ListadoVentasComponent } from './listado-ventas/listado-ventas.componen
     EstadosDeCuentaComponent,
     CierreDeCajaMensualComponent,
     ListadoComprasComponent,
-    ListadoVentasComponent
+    ListadoVentasComponent,
+    ListadoDeudasComponent
   ],
   imports: [
     CommonModule,
@@ -65,7 +72,12 @@ import { ListadoVentasComponent } from './listado-ventas/listado-ventas.componen
     MatToolbarModule,
     MatDividerModule,
     MatTableModule,
-    CalendarModule
+    CalendarModule,
+    MatIconModule,
+    MatChipsModule,
+    MatPaginatorModule,
+    MatSortModule,
+    TagModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-CO' },
