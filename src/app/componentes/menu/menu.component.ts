@@ -54,6 +54,7 @@ export class MenuComponent {
       expanded: false,
       subItems: [
         {label: 'Proveedores', route: '/persona/proveedores'},
+        {label: 'Clientes', route: '/persona/clientes'},
         { label: 'Detalles compras', route: '/listado/listado-compras' },
         { label: 'Detalles ventas', route: '/listado/listado-ventas' }
       ]

@@ -14,11 +14,13 @@ import { ToastModule } from 'primeng/toast';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ButtonModule } from 'primeng/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ClientesComponent } from './clientes/clientes.component';
 
 
 @NgModule({
   declarations: [
-    ProveedoresComponent
+    ProveedoresComponent,
+    ClientesComponent
   ],
   imports: [
     CommonModule,

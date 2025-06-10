@@ -1,1 +1,120 @@
-<p>clientes works!</p>
+<div class="table">
+  <div class="content">
+    <div class="client-container">
+      <div class="main-content">
+        <p-toast></p-toast>
+
+        <!-- Encabezado -->
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="pi pi-users"></i>
+            Gestión de Clientes
+          </h1>
+          <p class="page-subtitle">Administra y mantén actualizada la información de tus clientes</p>
+        </div>
+
+        <!-- Formulario de cliente -->
+        <p-card styleClass="form-card">
+          <ng-template pTemplate="header">
+            <div class="card-header-simple">
+              <i class="pi pi-plus-circle"></i>
+              <h2>Nuevo Cliente</h2>
+            </div>
+            <p class="card-subtitle-simple">Ingresa los datos del cliente</p>
+          </ng-template>
+
+          <form [formGroup]="clienteForm" (ngSubmit)="guardarCliente()" class="client-form">
+            <div class="form-row">
+              <!-- Nombre -->
+              <div class="input-group">
+                <label for="nombre">
+                  <i class="pi pi-user"></i>
+                  Nombre
+                </label>
+                <input pInputText id="nombre" formControlName="nombre" placeholder="Nombre del cliente"
+                  [ngClass]="{'p-invalid': campoInvalido('nombre')}" />
+                <small *ngIf="campoInvalido('nombre')" class="error-text">Campo requerido</small>
+              </div>
+
+              <!-- Documento -->
+              <div class="input-group">
+                <label for="documento">
+                  <i class="pi pi-id-card"></i>
+                  Documento
+                </label>
+                <input pInputText id="documento" formControlName="documento" placeholder="Número de identificación"
+                  [ngClass]="{'p-invalid': campoInvalido('documento')}" />
+                <small *ngIf="campoInvalido('documento')" class="error-text">Campo requerido</small>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <!-- Correo -->
+              <div class="input-group">
+                <label for="correo">
+                  <i class="pi pi-envelope"></i>
+                  Correo Electrónico
+                </label>
+                <input pInputText id="correo" type="email" formControlName="correo" placeholder="ejemplo@correo.com"
+                  [ngClass]="{'p-invalid': campoInvalido('correo')}" />
+                <small *ngIf="campoInvalido('correo')" class="error-text">Correo inválido</small>
+              </div>
+            </div>
+
+            <!-- Botón de guardado -->
+            <div class="form-actions">
+              <button pButton type="submit" label="Guardar Cliente" icon="pi pi-save" class="save-btn"></button>
+            </div>
+          </form>
+        </p-card>
+
+        <!-- Tabla de clientes -->
+        <p-card styleClass="table-card">
+          <ng-template pTemplate="header">
+            <div class="table-header-simple">
+              <i class="pi pi-list"></i>
+              <h2>Clientes Registrados</h2>
+            </div>
+            <p class="table-subtitle">Lista completa de clientes activos</p>
+            <div class="client-count">{{ clientes.length || 0 }} clientes</div>
+          </ng-template>
+
+          <p-table [value]="clientes" [paginator]="true" [rows]="8" [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" responsiveLayout="scroll"
+            styleClass="clean-table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th><i class="pi pi-user"></i> Nombre</th>
+                <th><i class="pi pi-id-card"></i> Documento</th>
+                <th><i class="pi pi-envelope"></i> Correo</th>
+                <th><i class="pi pi-cog"></i> Acciones</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-cliente let-i="rowIndex">
+              <tr>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.documento }}</td>
+                <td>{{ cliente.correo }}</td>
+                <td class="actions-col">
+                  <button pButton icon="pi pi-pencil" class="edit-btn" (click)="editarCliente(cliente, i)"></button>
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="4" class="no-data">
+                  <div class="no-data-content">
+                    <i class="pi pi-inbox"></i>
+                    <p>No hay clientes registrados</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>

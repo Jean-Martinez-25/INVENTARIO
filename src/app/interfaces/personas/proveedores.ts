@@ -15,3 +15,16 @@ export interface ProveedoresAdd {
   direccion: string;
   telefono: string;
 }
+export interface ClientesBack{
+  nombre: string;
+  documento: string;
+  correo: string;
+}
+
+export interface Clientes{
+  id: number;
+  nombre: string;
+  documento: string;
+  correo: string;
+  fechaCreacion: string;
+}
