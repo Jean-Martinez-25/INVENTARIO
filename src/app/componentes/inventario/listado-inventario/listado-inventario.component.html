@@ -1,92 +1,248 @@
 <div class="table">
     <div class="content">
-        <div class="div-title">
-            <h2 class="titulo-pages">
-                📄 Listado Inventario
-            </h2>
-        </div>
-        <!--Kevin-->
-        <p-card styleClass="mb-4">
-            <div class="p-d-flex p-jc-start p-ai-center mb-3 container-button">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-search"></i>
-                    </span>
-                    <input type="text" pInputText placeholder="Buscar..." [(ngModel)]="searchTerm"
-                        (input)="filtrarInventario()" />
+        <div class="inventory-container">
+            <div class="content-wrapper">
+                <!-- Header Section -->
+                <div class="header-section">
+                    <h2 class="titulo-pages">
+                        <i class="pi pi-box"></i>
+                        Gestión de Inventario
+                    </h2>
+                    <p class="subtitle">Administra y controla el stock de tus productos</p>
                 </div>
-                <div class="p-d-flex p-jc-end mb-2 boton">
-                    <button pButton type="button" icon="pi pi-plus" label="Crear producto" class="p-button-success"
-                        (click)="crearProducto()">
-                    </button>
-                </div>
-            </div>
 
-
-
-            <p-table [value]="inventarioFiltrado" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20]"
-                [responsiveLayout]="'scroll'" [globalFilterFields]="['id', 'nombre', 'marca', 'cantidad', 'seccion']"
-                sortMode="multiple">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th pSortableColumn="id" style="background-color: #0b1a2c; color: white;">
-                            Código <p-sortIcon field="id" />
-                        </th>
-                        <th pSortableColumn="nombre" style="background-color: #0b1a2c; color: white;">
-                            Nombre <p-sortIcon field="nombre" />
-                        </th>
-                        <th pSortableColumn="marca" style="background-color: #0b1a2c; color: white;">
-                            Marca <p-sortIcon field="marca" />
-                        </th>
-                        <th pSortableColumn="cantidad" style="background-color: #0b1a2c; color: white;">
-                            Stock <p-sortIcon field="cantidad" />
-                        </th>
-                        <th pSortableColumn="cantidad" style="background-color: #0b1a2c; color: white;">
-                            Estado <p-sortIcon field="cantidad" />
-                        </th>
-                        <th pSortableColumn="seccion" style="background-color: #0b1a2c; color: white;">
-                            Seccion <p-sortIcon field="seccion" />
-                        </th>
-                        <th style="text-align: center;" style="background-color: #0b1a2c; color: white;">Acciones</th>
-                    </tr>
-                </ng-template>
-
-                <ng-template pTemplate="body" let-producto>
-                    <tr>
-                        <td> <strong>{{ producto.codigo }}</strong> </td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.marca }}</td>
-                        <td>{{ producto.cantidad }}</td>
-                        <td>
-                            <span [ngClass]="{
-                            'estado-disponible': producto.cantidad > 10,
-                            'estado-proximo': producto.cantidad > 0 && producto.cantidad <= 10,
-                            'estado-agotado': producto.cantidad === 0
-                            }">
-                                {{ obtenerEstadoProducto(producto.cantidad) }}
-                            </span>
-                        </td>
-                        <td>{{ producto.seccion }}</td>
-                        <td style="text-align: center;">
-                            <div class="acciones-botones">
-                                <button pButton type="button" icon="pi pi-eye"
-                                    class="p-button-sm p-button-rounded p-button-info" (click)="verProducto(producto)"
-                                    pTooltip="Ver"></button>
-                                <button pButton type="button" icon="pi pi-pencil"
-                                    class="p-button-sm p-button-rounded p-button-warning"
-                                    (click)="abrirDialogoEditar(producto)" pTooltip="Editar"></button>
+                <!-- Main Card -->
+                <p-card styleClass="main-inventory-card">
+                    <!-- Controls Section -->
+                    <div class="controls-section">
+                        <div class="search-container">
+                            <div class="search-wrapper">
+                                <div class="p-inputgroup search-input">
+                                    <span class="p-inputgroup-addon">
+                                        <i class="pi pi-search"></i>
+                                    </span>
+                                    <input type="text" pInputText
+                                        placeholder="Buscar por código, nombre, marca o sección..."
+                                        [(ngModel)]="searchTerm" (input)="filtrarInventario()" class="search-field" />
+                                </div>
                             </div>
-                        </td>
-                    </tr>
-                </ng-template>
+                        </div>
 
-            </p-table>
-        </p-card>
+                        <div class="actions-container">
+                            <button pButton type="button" icon="pi pi-plus" label="Nuevo Producto"
+                                class="p-button-success create-btn" (click)="crearProducto()">
+                            </button>
+                        </div>
+                    </div>
 
-        <app-crear-editar-productos [(visible)]="mostrarDialogoProducto" [modo]="modoFormulario"
-            [producto]="productoSeleccionado" (productoGuardado)="onProductoGuardado($event)"
-            [dialogStyle]="{ width: '40vw', height: '63vh' }" dialogStyleClass="mi-modal">
-        </app-crear-editar-productos>
-        <!--Kevin end-->
+                    <!-- Stats Section (Opcional) -->
+                    <div class="stats-section">
+                        <div class="stat-card disponible">
+                            <div class="stat-icon">
+                                <i class="pi pi-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">{{ getProductosPorEstado('disponible') }}</span>
+                                <span class="stat-label">Disponibles</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card proximo">
+                            <div class="stat-icon">
+                                <i class="pi pi-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">{{ getProductosPorEstado('proximo') }}</span>
+                                <span class="stat-label">Próximo a acabar</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card agotado">
+                            <div class="stat-icon">
+                                <i class="pi pi-times-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number">{{ getProductosPorEstado('agotado') }}</span>
+                                <span class="stat-label">Agotados</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Section -->
+                    <div class="table-container">
+                        <p-table [value]="inventarioFiltrado" [paginator]="true" [rows]="10"
+                            [rowsPerPageOptions]="[5,10,20,50]" [responsiveLayout]="'scroll'"
+                            [globalFilterFields]="['codigo', 'nombre', 'marca', 'cantidad', 'seccion']"
+                            sortMode="multiple" [loading]="loading" styleClass="custom-table">
+
+                            <!-- Table Header -->
+                            <ng-template pTemplate="header">
+                                <tr class="table-header">
+                                    <th pSortableColumn="codigo" class="col-codigo">
+                                        <div class="header-content">
+                                            <i class="pi pi-hashtag"></i>
+                                            <span>Código</span>
+                                            <p-sortIcon field="codigo" />
+                                        </div>
+                                    </th>
+                                    <th pSortableColumn="nombre" class="col-nombre">
+                                        <div class="header-content">
+                                            <i class="pi pi-tag"></i>
+                                            <span>Producto</span>
+                                            <p-sortIcon field="nombre" />
+                                        </div>
+                                    </th>
+                                    <th pSortableColumn="marca" class="col-marca">
+                                        <div class="header-content">
+                                            <i class="pi pi-bookmark"></i>
+                                            <span>Marca</span>
+                                            <p-sortIcon field="marca" />
+                                        </div>
+                                    </th>
+                                    <th pSortableColumn="cantidad" class="col-stock">
+                                        <div class="header-content">
+                                            <i class="pi pi-chart-bar"></i>
+                                            <span>Stock</span>
+                                            <p-sortIcon field="cantidad" />
+                                        </div>
+                                    </th>
+                                    <th class="col-estado">
+                                        <div class="header-content">
+                                            <i class="pi pi-info-circle"></i>
+                                            <span>Estado</span>
+                                        </div>
+                                    </th>
+                                    <th pSortableColumn="seccion" class="col-seccion">
+                                        <div class="header-content">
+                                            <i class="pi pi-map-marker"></i>
+                                            <span>Sección</span>
+                                            <p-sortIcon field="seccion" />
+                                        </div>
+                                    </th>
+                                    <th class="col-acciones">
+                                        <div class="header-content">
+                                            <i class="pi pi-cog"></i>
+                                            <span>Acciones</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </ng-template>
+
+                            <!-- Table Body -->
+                            <ng-template pTemplate="body" let-producto let-rowIndex="rowIndex">
+                                <tr class="table-row" [attr.data-index]="rowIndex">
+                                    <td class="col-codigo">
+                                        <div class="codigo-container">
+                                            <span class="codigo-badge">{{ producto.codigo }}</span>
+                                        </div>
+                                    </td>
+
+                                    <td class="col-nombre">
+                                        <div class="producto-info">
+                                            <span class="producto-nombre">{{ producto.nombre }}</span>
+                                            <span class="producto-medida" *ngIf="producto.medida">{{ producto.medida
+                                                }}</span>
+                                        </div>
+                                    </td>
+
+                                    <td class="col-marca">
+                                        <div class="marca-container">
+                                            <span class="marca-text">{{ producto.marca }}</span>
+                                        </div>
+                                    </td>
+
+                                    <td class="col-stock">
+                                        <div class="stock-container">
+                                            <span class="stock-number" [ngClass]="{
+                    'stock-high': producto.cantidad > 10,
+                    'stock-medium': producto.cantidad > 0 && producto.cantidad <= 10,
+                    'stock-empty': producto.cantidad === 0
+                  }">
+                                                {{ producto.cantidad }}
+                                            </span>
+                                            <span class="stock-label">unidades</span>
+                                        </div>
+                                    </td>
+
+                                    <td class="col-estado">
+                                        <div class="estado-container">
+                                            <span class="estado-badge" [ngClass]="{
+                    'estado-disponible': producto.cantidad > 10,
+                    'estado-proximo': producto.cantidad > 0 && producto.cantidad <= 10,
+                    'estado-agotado': producto.cantidad === 0
+                  }">
+                                                <i class="estado-icon" [ngClass]="{
+                      'pi pi-check': producto.cantidad > 10,
+                      'pi pi-exclamation-triangle': producto.cantidad > 0 && producto.cantidad <= 10,
+                      'pi pi-times': producto.cantidad === 0
+                    }"></i>
+                                                {{ obtenerEstadoProducto(producto.cantidad) }}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td class="col-seccion">
+                                        <div class="seccion-container">
+                                            <span class="seccion-badge">{{ producto.seccion }}</span>
+                                        </div>
+                                    </td>
+
+                                    <td class="col-acciones">
+                                        <div class="acciones-container">
+                                            <button pButton type="button" icon="pi pi-eye"
+                                                class="p-button-sm p-button-rounded p-button-info action-btn view-btn"
+                                                (click)="verProducto(producto)" pTooltip="Ver detalles"
+                                                tooltipPosition="top">
+                                            </button>
+                                            <button pButton type="button" icon="pi pi-pencil"
+                                                class="p-button-sm p-button-rounded p-button-warning action-btn edit-btn"
+                                                (click)="abrirDialogoEditar(producto)" pTooltip="Editar producto"
+                                                tooltipPosition="top">
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                            <!-- Empty State -->
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="7" class="empty-state">
+                                        <div class="empty-content">
+                                            <i class="pi pi-inbox empty-icon"></i>
+                                            <h3>No hay productos</h3>
+                                            <p>No se encontraron productos que coincidan con tu búsqueda.</p>
+                                            <button pButton type="button" label="Crear primer producto"
+                                                class="p-button-outlined" (click)="crearProducto()">
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                            <!-- Loading Template -->
+                            <ng-template pTemplate="loadingbody">
+                                <tr>
+                                    <td colspan="7" class="loading-state">
+                                        <div class="loading-content">
+                                            <i class="pi pi-spin pi-spinner loading-icon"></i>
+                                            <span>Cargando productos...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+                    </div>
+                </p-card>
+
+                <!-- Modal Component -->
+                <app-crear-editar-productos [(visible)]="mostrarDialogoProducto" [modo]="modoFormulario"
+                    [producto]="productoSeleccionado" (productoGuardado)="onProductoGuardado($event)"
+                    [dialogStyle]="{ width: '40vw', height: '63vh' }" dialogStyleClass="custom-modal">
+                </app-crear-editar-productos>
+            </div>
+        </div>
+
     </div>
 </div>

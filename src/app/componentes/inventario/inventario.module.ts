@@ -31,6 +31,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { EditarProductoAuditoriaComponent } from './editar-producto-auditoria/editar-producto-auditoria.component';
+import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [
     ListadoInventarioComponent,
@@ -65,7 +66,8 @@ import { EditarProductoAuditoriaComponent } from './editar-producto-auditoria/ed
     MatCardModule,
     MatListModule, 
     MatDividerModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    MatIconModule
   ],
   providers: [
       DialogService,

@@ -1,25 +1,258 @@
-.lista-texto{
-    width: 100%;
-    display: flex;
+/* Estilos del diálogo */
+.dialog-content {
+  padding: 0;
+  margin: 0;
+  max-width: 600px;
+  min-width: 500px;
 }
-.texto-titulo{
-    text-align: left;
+
+.dialog-actions {
+  padding: 16px 24px;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
 }
-.texto-valor{
-    justify-content: end;
-    margin-left: auto;
+
+/* Estilos de la card principal */
+.producto-card {
+  box-shadow: none;
+  border-radius: 12px;
+  overflow: hidden;
 }
-.titulo-producto {
-  background-color: #212433;
-  color: #fff;
-  font-weight: bold;
-  padding: 4px 10px;
-  border-radius: 10px;
+
+/* Header del producto */
+.producto-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  margin: 0;
 }
-.data {
-  background-color: #7483cc;
-  color: #ffffff;
+
+.producto-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.producto-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.producto-codigo {
+  margin-top: 8px;
+  opacity: 0.9;
+  color: white;
+}
+
+.codigo-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
   font-weight: 500;
-  padding: 4px 8px;
-  border-radius: 7px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Contenido de la card */
+.producto-content {
+  padding: 24px;
+}
+
+/* Secciones */
+.info-section, .stats-section, .description-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-divider {
+  margin: 24px 0;
+}
+
+/* Grid de información general */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.info-icon {
+  color: #667eea;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Grid de estadísticas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.compras {
+  border-top-color: #ff6b6b;
+}
+
+.stat-card.ventas {
+  border-top-color: #4ecdc4;
+}
+
+.stat-card.ganancias {
+  border-top-color: #45b7d1;
+  grid-column: 1 / -1;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-header mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.compras .stat-header mat-icon {
+  color: #ff6b6b;
+}
+
+.ventas .stat-header mat-icon {
+  color: #4ecdc4;
+}
+
+.ganancias .stat-header mat-icon {
+  color: #45b7d1;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-item.total-ganancia {
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #333;
+}
+
+.ganancia-valor {
+  font-size: 1.25rem;
+  color: #45b7d1;
+  font-weight: 700;
+}
+
+/* Descripción */
+.producto-descripcion {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  margin: 0;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 600px) {
+  .dialog-content {
+    min-width: auto;
+    max-width: 95vw;
+  }
+  
+  .producto-header {
+    padding: 16px;
+  }
+  
+  .producto-content {
+    padding: 16px;
+  }
+  
+  .producto-titulo {
+    font-size: 1.25rem;
+  }
 }

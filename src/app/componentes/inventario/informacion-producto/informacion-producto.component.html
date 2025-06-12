@@ -1,105 +1,130 @@
-<mat-dialog-content>
-  <mat-card>
-    <mat-card-title> <h2 class="titulo-producto" style="text-align: center;">{{ producto.nombre }}</h2></mat-card-title>
+<mat-dialog-content class="dialog-content">
+  <mat-card class="producto-card">
+    <!-- Header del producto -->
+    <mat-card-header class="producto-header">
+      <mat-card-title class="producto-titulo">
+        <mat-icon class="producto-icon">inventory_2</mat-icon>
+        {{ producto.nombre }}
+      </mat-card-title>
+      <mat-card-subtitle class="producto-codigo">
+        Código: <span class="codigo-badge">{{ producto.codigo }}</span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
     <mat-divider></mat-divider>
-    <mat-list class="lista">
-      <mat-list-item>
-        <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Código:</strong>
+
+    <!-- Información básica del producto -->
+    <mat-card-content class="producto-content">
+      <div class="info-section">
+        <h3 class="section-title">
+          <mat-icon>info</mat-icon>
+          Información General
+        </h3>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <mat-icon class="info-icon">branding_watermark</mat-icon>
+            <div class="info-text">
+              <span class="info-label">Marca</span>
+              <span class="info-value">{{ producto.marca }}</span>
             </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.codigo }}</span>
+          </div>
+
+          <div class="info-item">
+            <mat-icon class="info-icon">straighten</mat-icon>
+            <div class="info-text">
+              <span class="info-label">Medida</span>
+              <span class="info-value">{{ producto.medida }}</span>
             </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon class="info-icon">category</mat-icon>
+            <div class="info-text">
+              <span class="info-label">Sección</span>
+              <span class="info-value">{{ producto.seccion }}</span>
+            </div>
+          </div>
         </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Marca:</strong>
+      </div>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <!-- Estadísticas de ventas -->
+      <div class="stats-section">
+        <h3 class="section-title">
+          <mat-icon>analytics</mat-icon>
+          Estadísticas de Ventas
+        </h3>
+        
+        <div class="stats-grid">
+          <div class="stat-card compras">
+            <div class="stat-header">
+              <mat-icon>shopping_cart</mat-icon>
+              <span>Compras</span>
             </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.marca }}</span>
+            <div class="stat-content">
+              <div class="stat-item">
+                <span class="stat-label">Unidades</span>
+                <span class="stat-value">{{ producto.totalUnidadesCompradas }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Valor Total</span>
+                <span class="stat-value">{{ producto.totalComprado | currency }}</span>
+              </div>
             </div>
+          </div>
+
+          <div class="stat-card ventas">
+            <div class="stat-header">
+              <mat-icon>point_of_sale</mat-icon>
+              <span>Ventas</span>
+            </div>
+            <div class="stat-content">
+              <div class="stat-item">
+                <span class="stat-label">Unidades</span>
+                <span class="stat-value">{{ producto.totalUnidadesVendidas }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Valor Total</span>
+                <span class="stat-value">{{ producto.totalVendido | currency }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card ganancias">
+            <div class="stat-header">
+              <mat-icon>trending_up</mat-icon>
+              <span>Ganancias</span>
+            </div>
+            <div class="stat-content">
+              <div class="stat-item total-ganancia">
+                <span class="stat-label">Total</span>
+                <span class="stat-value ganancia-valor">
+                  {{ producto.totalVendido - producto.totalComprado | currency }}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Medida:</strong>
-            </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.medida }}</span>
-            </div>
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Seccion:</strong>
-            </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.seccion }}</span>
-            </div>
-        </div>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-      <mat-list-item>
-        <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Total Comprado:</strong>
-            </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.totalUnidadesCompradas }}</span>
-            </div>
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Total Vendido:</strong>
-            </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.totalUnidadesVendidas }}</span>
-            </div>
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-        <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Valor Comprado:</strong>
-            </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.totalComprado | currency }}</span>
-            </div>
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-         <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Valor Venta:</strong>
-            </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.totalVendido | currency }}</span>
-            </div>
-        </div>
-      </mat-list-item>
-      <mat-list-item>
-         <div class="lista-texto">
-            <div class="texto-titulo">
-                <strong>Ganancias:</strong>
-            </div>
-            <div class="texto-valor">
-                <span class="data">{{ producto.totalVendido - producto.totalComprado | currency }}</span>
-            </div>
-        </div>
-      </mat-list-item>
-    </mat-list>
-    <mat-divider></mat-divider>
-    <mat-card-subtitle>{{ producto.descripcion }}</mat-card-subtitle>
+      </div>
+
+      <!-- Descripción -->
+      <div class="description-section" *ngIf="producto.descripcion">
+        <mat-divider class="section-divider"></mat-divider>
+        <h3 class="section-title">
+          <mat-icon>description</mat-icon>
+          Descripción
+        </h3>
+        <p class="producto-descripcion">{{ producto.descripcion }}</p>
+      </div>
+    </mat-card-content>
   </mat-card>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" style="text-align: center; justify-content: center;">
-  <button mat-button mat-dialog-close>Cerrar</button>
+<mat-dialog-actions class="dialog-actions">
+  <button mat-raised-button color="primary" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+    Cerrar
+  </button>
 </mat-dialog-actions>

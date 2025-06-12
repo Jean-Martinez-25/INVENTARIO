@@ -31,14 +31,6 @@ export class ListadoInventarioComponent implements OnInit {
     this.obtenerListado();
   }
 
-  obtenerListado() {
-    this.inventarioService.obtenerListadoInventario().subscribe({
-      next: data => {
-        this.inventario = data;
-        this.filtrarInventario();
-      }
-    })
-  }
   filtrarInventario() {
     const termino = this.searchTerm.toLowerCase();
     this.inventarioFiltrado = this.inventario.filter(
@@ -78,6 +70,42 @@ export class ListadoInventarioComponent implements OnInit {
       }
     });
   }
+
+  loading: boolean = false;
+
+// Agregar este método para las estadísticas
+getProductosPorEstado(estado: 'disponible' | 'proximo' | 'agotado'): number {
+  if (!this.inventario) return 0;
+  
+  return this.inventario.filter(producto => {
+    switch (estado) {
+      case 'disponible':
+        return producto.cantidad > 10;
+      case 'proximo':
+        return producto.cantidad > 0 && producto.cantidad <= 10;
+      case 'agotado':
+        return producto.cantidad === 0;
+      default:
+        return false;
+    }
+  }).length;
+}
+
+// Modificar el método obtenerListado para incluir loading
+obtenerListado() {
+  this.loading = true;
+  this.inventarioService.obtenerListadoInventario().subscribe({
+    next: data => {
+      this.inventario = data;
+      this.filtrarInventario();
+      this.loading = false;
+    },
+    error: error => {
+      console.error('Error al obtener inventario:', error);
+      this.loading = false;
+    }
+  });
+}
 
   crearProducto() {
     this.modoFormulario = 'crear';

@@ -39,7 +39,9 @@ import { MessageService } from 'primeng/api';
 // Components
 import { InformacionFacturasComponent } from './informacion-facturas/informacion-facturas.component';
 import { ListadoComprasComponent } from './listado-compras/listado-compras.component';
-
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { BadgeModule } from 'primeng/badge';
+import { TagModule } from 'primeng/tag';
 @NgModule({
   declarations: [
     FiltroVentasListadoComponent,
@@ -81,7 +83,10 @@ import { ListadoComprasComponent } from './listado-compras/listado-compras.compo
     AutoCompleteModule,
     CheckboxModule,
     CalendarModule,
-    TooltipModule
+    TooltipModule,
+    ProgressSpinnerModule,
+    BadgeModule,
+    TagModule
   ],
   providers: [
     DialogService,
