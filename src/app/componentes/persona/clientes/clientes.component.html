@@ -1,10 +1,10 @@
 <div class="table">
   <div class="content">
-    <div class="client-container">
+    <div class="provider-container">
       <div class="main-content">
         <p-toast></p-toast>
 
-        <!-- Encabezado -->
+        <!-- Header Section -->
         <div class="page-header">
           <h1 class="page-title">
             <i class="pi pi-users"></i>
@@ -13,7 +13,7 @@
           <p class="page-subtitle">Administra y mantén actualizada la información de tus clientes</p>
         </div>
 
-        <!-- Formulario de cliente -->
+        <!-- Formulario de registro -->
         <p-card styleClass="form-card">
           <ng-template pTemplate="header">
             <div class="card-header-simple">
@@ -50,7 +50,7 @@
 
             <div class="form-row">
               <!-- Correo -->
-              <div class="input-group">
+              <div class="input-group full-width">
                 <label for="correo">
                   <i class="pi pi-envelope"></i>
                   Correo Electrónico
@@ -61,9 +61,10 @@
               </div>
             </div>
 
-            <!-- Botón de guardado -->
+            <!-- Botón de envío -->
             <div class="form-actions">
-              <button pButton type="submit" label="Guardar Cliente" icon="pi pi-save" class="save-btn"></button>
+              <button pButton type="submit" label="Guardar Cliente" icon="pi pi-save" class="save-btn">
+              </button>
             </div>
           </form>
         </p-card>
@@ -97,7 +98,8 @@
                 <td>{{ cliente.documento }}</td>
                 <td>{{ cliente.correo }}</td>
                 <td class="actions-col">
-                  <button pButton icon="pi pi-pencil" class="edit-btn" (click)="editarCliente(cliente, i)"></button>
+                  <button pButton icon="pi pi-pencil" class="edit-btn" (click)="editarCliente(cliente, i)">
+                  </button>
                 </td>
               </tr>
             </ng-template>

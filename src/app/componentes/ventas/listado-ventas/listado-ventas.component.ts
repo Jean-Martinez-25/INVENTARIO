@@ -134,7 +134,8 @@ export class ListadoVentasComponent implements OnInit {
       header: texto,
       width: '70%',
       data: {
-        numFactura: numFactura
+        numFactura: numFactura,
+        tipo: 1
       }
     });
   }

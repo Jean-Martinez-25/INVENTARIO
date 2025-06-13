@@ -42,6 +42,8 @@ import { PagoDeudasComponent } from './pago-deudas/pago-deudas.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 @NgModule({
   declarations: [
     ReportesComponent,
@@ -85,7 +87,9 @@ import { ToastModule } from 'primeng/toast';
     TagModule,
     MatDialogModule,
     CommonModule,
-    ToastModule
+    ToastModule,
+    MatExpansionModule,
+    MatButtonToggleModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-CO' },

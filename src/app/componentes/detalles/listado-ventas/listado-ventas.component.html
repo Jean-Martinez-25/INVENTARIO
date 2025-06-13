@@ -1,71 +1,204 @@
 <div class="table">
     <div class="content">
-        <div class="div-title">
-            <h2 class="titulo-pages">
-                📄 Detalle de productos vendidos
-            </h2>
-        </div>
-        <p-card>
-            <p-table [value]="inventarioFiltrado" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20]"
-                [responsiveLayout]="'scroll'" [globalFilterFields]="['numFactura', 'Producto', 'marca', 'cliente']"
-                sortMode="multiple">
-
-                <ng-template pTemplate="caption">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-search"></i>
-                        </span>
-                        <input type="text" pInputText placeholder="Buscar..." [(ngModel)]="searchTerm"
-                            (input)="filtrarInventario()" />
+        <!-- HTML Template Mejorado -->
+        <div class="sales-detail-container">
+            <div class="content-wrapper">
+                <!-- Header Section -->
+                <div class="header-section">
+                    <div class="title-container">
+                        <div class="icon-wrapper">
+                            <i class="pi pi-chart-line"></i>
+                        </div>
+                        <div class="title-content">
+                            <h1 class="page-title">Detalle de Productos Vendidos</h1>
+                            <p class="page-subtitle">Gestiona y visualiza el detalle de todas las ventas realizadas</p>
+                        </div>
                     </div>
-                </ng-template>
 
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="pi pi-shopping-cart"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ inventarioFiltrado.length }}</h3>
+                                <p class="stat-label">Productos</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="pi pi-dollar"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ getTotalVentas() | currency:'COP':'symbol':'1.0-0' }}</h3>
+                                <p class="stat-label">Total Ventas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th pSortableColumn="id" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-hashtag"></i> ID
-                            <p-sortIcon field="id"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="numFactura" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-file"></i> N° Factura
-                            <p-sortIcon field="numFactura"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="Producto" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-dollar"></i> Producto
-                            <p-sortIcon field="Producto"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="Cantidad" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-dollar"></i> Cantidad
-                            <p-sortIcon field="Cantidad"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="totalVenta" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-dollar"></i> Total Venta
-                            <p-sortIcon field="totalVenta"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="marca" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-calendar"></i> Marca
-                            <p-sortIcon field="marca"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="cliente" style="background-color: #0b1a2c; color: white;">
-                            <i class="pi pi-user"></i> Cliente
-                            <p-sortIcon field="cliente"></p-sortIcon>
-                        </th>
-                    </tr>
-                </ng-template>
+                <!-- Enhanced Table Card -->
+                <div class="table-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="pi pi-table"></i>
+                            Lista de Productos Vendidos
+                        </h3>
+                        <div class="card-actions">
+                            <button class="action-btn export-btn" title="Exportar datos">
+                                <i class="pi pi-download"></i>
+                                Exportar
+                            </button>
+                        </div>
+                    </div>
 
-                <ng-template pTemplate="body" let-factura>
-                    <tr>
-                        <td> <strong>{{ factura.codigo }}</strong> </td>
-                        <td>{{ factura.numFactura }}</td>
-                        <td>{{ factura.producto }}</td>
-                        <td> {{ factura.cantidad }} </td>
-                        <td>{{ factura.totalVenta | currency:'COP':'symbol':'1.0-0' }}</td>
-                        <td>{{ factura.marca }}</td>
-                        <td>{{ factura.cliente }}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </p-card>
+                    <p-table [value]="inventarioFiltrado" [paginator]="true" [rows]="10"
+                        [rowsPerPageOptions]="[5,10,20,50]" [responsiveLayout]="'scroll'"
+                        [globalFilterFields]="['numFactura', 'Producto', 'marca', 'cliente']" sortMode="multiple"
+                        styleClass="custom-table">
+
+                        <ng-template pTemplate="caption">
+                            <div class="table-header">
+                                <div class="search-container">
+                                    <div class="search-input-wrapper">
+                                        <i class="pi pi-search search-icon"></i>
+                                        <input type="text" pInputText
+                                            placeholder="Buscar por producto, marca, cliente o factura..."
+                                            [(ngModel)]="searchTerm" (input)="filtrarInventario()"
+                                            class="search-input" />
+                                        <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()"
+                                            title="Limpiar búsqueda">
+                                            <i class="pi pi-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="filter-info" *ngIf="searchTerm">
+                                    <span class="filter-badge">
+                                        <i class="pi pi-filter"></i>
+                                        {{ inventarioFiltrado.length }} de {{ datos.length }} resultados
+                                    </span>
+                                </div>
+                            </div>
+                        </ng-template>
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="id" class="header-cell">
+                                    <div class="header-content">
+                                        <i class="pi pi-hashtag header-icon"></i>
+                                        <span>ID</span>
+                                        <p-sortIcon field="id"></p-sortIcon>
+                                    </div>
+                                </th>
+                                <th pSortableColumn="numFactura" class="header-cell">
+                                    <div class="header-content">
+                                        <i class="pi pi-file header-icon"></i>
+                                        <span>N° Factura</span>
+                                        <p-sortIcon field="numFactura"></p-sortIcon>
+                                    </div>
+                                </th>
+                                <th pSortableColumn="Producto" class="header-cell">
+                                    <div class="header-content">
+                                        <i class="pi pi-box header-icon"></i>
+                                        <span>Producto</span>
+                                        <p-sortIcon field="Producto"></p-sortIcon>
+                                    </div>
+                                </th>
+                                <th pSortableColumn="Cantidad" class="header-cell">
+                                    <div class="header-content">
+                                        <i class="pi pi-sort-numeric-up header-icon"></i>
+                                        <span>Cantidad</span>
+                                        <p-sortIcon field="Cantidad"></p-sortIcon>
+                                    </div>
+                                </th>
+                                <th pSortableColumn="totalVenta" class="header-cell">
+                                    <div class="header-content">
+                                        <i class="pi pi-dollar header-icon"></i>
+                                        <span>Total Venta</span>
+                                        <p-sortIcon field="totalVenta"></p-sortIcon>
+                                    </div>
+                                </th>
+                                <th pSortableColumn="marca" class="header-cell">
+                                    <div class="header-content">
+                                        <i class="pi pi-tag header-icon"></i>
+                                        <span>Marca</span>
+                                        <p-sortIcon field="marca"></p-sortIcon>
+                                    </div>
+                                </th>
+                                <th pSortableColumn="cliente" class="header-cell">
+                                    <div class="header-content">
+                                        <i class="pi pi-user header-icon"></i>
+                                        <span>Cliente</span>
+                                        <p-sortIcon field="cliente"></p-sortIcon>
+                                    </div>
+                                </th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-factura let-rowIndex="rowIndex">
+                            <tr class="table-row" [class.even-row]="rowIndex % 2 === 0">
+                                <td class="table-cell">
+                                    <div class="cell-content">
+                                        <span class="id-badge">{{ factura.codigo }}</span>
+                                    </div>
+                                </td>
+                                <td class="table-cell">
+                                    <div class="cell-content">
+                                        <i class="pi pi-file-text cell-icon"></i>
+                                        <span>{{ factura.numFactura }}</span>
+                                    </div>
+                                </td>
+                                <td class="table-cell">
+                                    <div class="cell-content product-cell">
+                                        <span class="product-name">{{ factura.producto }}</span>
+                                    </div>
+                                </td>
+                                <td class="table-cell">
+                                    <div class="cell-content">
+                                        <span class="quantity-badge">{{ factura.cantidad }}</span>
+                                    </div>
+                                </td>
+                                <td class="table-cell">
+                                    <div class="cell-content">
+                                        <span class="price-amount">{{ factura.totalVenta |
+                                            currency:'COP':'symbol':'1.0-0' }}</span>
+                                    </div>
+                                </td>
+                                <td class="table-cell">
+                                    <div class="cell-content">
+                                        <span class="brand-tag">{{ factura.marca }}</span>
+                                    </div>
+                                </td>
+                                <td class="table-cell">
+                                    <div class="cell-content">
+                                        <div class="client-info">
+                                            <i class="pi pi-user client-icon"></i>
+                                            <span>{{ factura.cliente }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-content">
+                                        <i class="pi pi-inbox empty-icon"></i>
+                                        <h4>No se encontraron resultados</h4>
+                                        <p>No hay productos que coincidan con tu búsqueda.</p>
+                                        <button class="clear-filters-btn" (click)="clearSearch()" *ngIf="searchTerm">
+                                            <i class="pi pi-refresh"></i>
+                                            Limpiar filtros
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

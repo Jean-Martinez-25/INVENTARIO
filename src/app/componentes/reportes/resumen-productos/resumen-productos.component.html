@@ -1,63 +1,302 @@
-<mat-card class="p-4 shadow-md fondo-gris">
-  <mat-card-title class="text-xl font-semibold mb-10 text-gray-800 titulo">
-    Productos más vendidos
-  </mat-card-title>
+<!-- Métricas principales -->
+<div class="metricas-container">
+  <mat-card class="metrica-card">
+    <mat-card-content>
+      <div class="metrica-content">
+        <mat-icon class="metrica-icon productos">inventory_2</mat-icon>
+        <div class="metrica-info">
+          <h3 class="metrica-valor">{{ getTotalProductos() }}</h3>
+          <p class="metrica-label">Productos Vendidos</p>
+          <span class="metrica-cambio positivo">+{{ getPorcentajeCambio() }}%</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-  <!-- Filtros -->
-  <div class="filtro-container">
-    <div class="campos-fila">
-      <mat-form-field appearance="fill">
-        <mat-label>Marca</mat-label>
-        <mat-select [(ngModel)]="marcaSeleccionada">
-          <mat-option *ngFor="let marca of marcas" [value]="marca.id">
-            {{ marca.nombre }}
-          </mat-option>
-          <mat-option [value]="null">Todas</mat-option>
-        </mat-select>
-      </mat-form-field>
+  <mat-card class="metrica-card">
+    <mat-card-content>
+      <div class="metrica-content">
+        <mat-icon class="metrica-icon ventas">trending_up</mat-icon>
+        <div class="metrica-info">
+          <h3 class="metrica-valor">{{ getTotalVentas() | currency }}</h3>
+          <p class="metrica-label">Ingresos Totales</p>
+          <span class="metrica-cambio positivo">+{{ getIncrementoVentas() }}%</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Fecha Inicio</mat-label>
-        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio" />
-        <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
-        <mat-datepicker #pickerInicio></mat-datepicker>
-      </mat-form-field>
+  <mat-card class="metrica-card">
+    <mat-card-content>
+      <div class="metrica-content">
+        <mat-icon class="metrica-icon promedio">analytics</mat-icon>
+        <div class="metrica-info">
+          <h3 class="metrica-valor">{{ getPromedioVenta() | currency }}</h3>
+          <p class="metrica-label">Venta Promedio</p>
+          <span class="metrica-cambio neutral">{{ getVariacionPromedio() }}%</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Fecha Fin</mat-label>
-        <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin" />
-        <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
-        <mat-datepicker #pickerFin></mat-datepicker>
-      </mat-form-field>
+  <mat-card class="metrica-card">
+    <mat-card-content>
+      <div class="metrica-content">
+        <mat-icon class="metrica-icon marca-top">star</mat-icon>
+        <div class="metrica-info">
+          <h3 class="metrica-valor">{{ getMarcaTop() }}</h3>
+          <p class="metrica-label">Marca Líder</p>
+          <span class="metrica-cambio positivo">{{ getParticipacionMarca() }}%</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Componente principal mejorado -->
+<mat-card class="main-card">
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <mat-icon class="title-icon">assessment</mat-icon>
+      Análisis de Productos Más Vendidos
+    </mat-card-title>
+    <mat-card-subtitle class="card-subtitle">
+      Período: {{ getPeriodoActual() }} | Última actualización: {{ getFechaActualizacion() }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Filtros mejorados -->
+    <div class="filtros-avanzados">
+      <mat-expansion-panel class="filtros-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>filter_list</mat-icon>
+            Filtros Avanzados
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ getFiltrosActivos() }} filtros activos
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <div class="filtros-grid">
+          <mat-form-field appearance="outline" class="filtro-field">
+            <mat-label>Marca</mat-label>
+            <mat-select [(ngModel)]="marcaSeleccionada" multiple>
+              <mat-option *ngFor="let marca of marcas" [value]="marca.id">
+                {{ marca.nombre }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>business</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filtro-field">
+            <mat-label>Fecha Inicio</mat-label>
+            <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechaInicio">
+            <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+            <mat-datepicker #pickerInicio></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filtro-field">
+            <mat-label>Fecha Fin</mat-label>
+            <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechaFin">
+            <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFin></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filtro-field">
+            <mat-label>Cantidad Mínima</mat-label>
+            <input matInput type="number" [(ngModel)]="cantidadMinima" placeholder="0">
+            <mat-icon matSuffix>inventory</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="filtros-acciones">
+          <button mat-raised-button color="primary" (click)="filtrarProductos()">
+            <mat-icon>search</mat-icon>
+            Aplicar Filtros
+          </button>
+          <button mat-stroked-button (click)="limpiarFiltros()">
+            <mat-icon>clear</mat-icon>
+            Limpiar
+          </button>
+          <button mat-stroked-button (click)="exportarDatos()">
+            <mat-icon>download</mat-icon>
+            Exportar
+          </button>
+        </div>
+      </mat-expansion-panel>
     </div>
 
-    <div class="boton-fila">
-      <button mat-raised-button color="primary" (click)="filtrarProductos()">Filtrar</button>
+    <!-- Tabla mejorada -->
+    <div class="tabla-container">
+      <div class="tabla-header">
+        <h3>Ranking de Productos</h3>
+        <div class="tabla-controles">
+          <mat-button-toggle-group [(ngModel)]="vistaActual" class="vista-toggle">
+            <mat-button-toggle value="tabla">
+              <mat-icon>table_view</mat-icon>
+              Tabla
+            </mat-button-toggle>
+            <mat-button-toggle value="cards">
+              <mat-icon>view_module</mat-icon>
+              Cards
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </div>
+
+      <!-- Vista de tabla -->
+      <div *ngIf="vistaActual === 'tabla'" class="tabla-wrapper">
+        <p-table 
+          [value]="productos" 
+          [paginator]="true" 
+          [rows]="10"
+          [sortField]="'totalVenta'" 
+          [sortOrder]="-1"
+          responsiveLayout="scroll" 
+          class="productos-table">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="ranking-col">#</th>
+              <th pSortableColumn="nombre">
+                Producto 
+                <p-sortIcon field="nombre"></p-sortIcon>
+              </th>
+              <th pSortableColumn="marca">
+                Marca
+                <p-sortIcon field="marca"></p-sortIcon>
+              </th>
+              <th pSortableColumn="cantidadVendida" class="text-center">
+                Cantidad
+                <p-sortIcon field="cantidadVendida"></p-sortIcon>
+              </th>
+              <th pSortableColumn="totalVenta" class="text-center">
+                Total Ventas
+                <p-sortIcon field="totalVenta"></p-sortIcon>
+              </th>
+              <th class="text-center">Participación</th>
+              <th class="text-center">Tendencia</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-producto let-i="rowIndex">
+            <tr class="producto-row">
+              <td class="ranking-cell">
+                <div class="ranking-badge" [ngClass]="getRankingClass(i)">
+                  {{ i + 1 }}
+                </div>
+              </td>
+              <td class="producto-info">
+                <div class="producto-details">
+                  <strong>{{ producto.nombre }}</strong>
+                  <small class="producto-codigo">{{ producto.codigo }}</small>
+                </div>
+              </td>
+              <td>
+                <span class="marca-badge">{{ producto.marca }}</span>
+              </td>
+              <td class="text-center">
+                <div class="cantidad-info">
+                  <strong>{{ producto.cantidadVendida | number }}</strong>
+                  <small>unidades</small>
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="venta-info">
+                  <strong class="venta-total">{{ producto.totalVenta | currency }}</strong>
+                  <small>{{ getVentaPromedioPorUnidad(producto) | currency }}/u</small>
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="participacion-info">
+                  <div class="participacion-bar">
+                    <div class="participacion-fill" 
+                         [style.width.%]="getParticipacion(producto)">
+                    </div>
+                  </div>
+                  <span class="participacion-text">{{ getParticipacion(producto) }}%</span>
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="tendencia-info">
+                  <mat-icon [ngClass]="getTendenciaClass(producto)">
+                    {{ getTendenciaIcon(producto) }}
+                  </mat-icon>
+                  <span class="tendencia-text">{{ getTendenciaTexto(producto) }}</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- Vista de cards -->
+      <div *ngIf="vistaActual === 'cards'" class="cards-container">
+        <mat-card *ngFor="let producto of productos; let i = index" class="producto-card">
+          <mat-card-header>
+            <div mat-card-avatar class="ranking-avatar" [ngClass]="getRankingClass(i)">
+              {{ i + 1 }}
+            </div>
+            <mat-card-title>{{ producto.nombre }}</mat-card-title>
+            <mat-card-subtitle>{{ producto.marca }}</mat-card-subtitle>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <div class="card-stats">
+              <div class="stat-item">
+                <mat-icon>inventory</mat-icon>
+                <div>
+                  <strong>{{ producto.cantidadVendida }}</strong>
+                  <span>Unidades</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon>attach_money</mat-icon>
+                <div>
+                  <strong>{{ producto.totalVenta | currency }}</strong>
+                  <span>Total</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon>pie_chart</mat-icon>
+                <div>
+                  <strong>{{ getParticipacion(producto) }}%</strong>
+                  <span>Participación</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
-  </div>
-
-  <p-table [value]="productos" responsiveLayout="scroll" class="custom-table p-datatable-striped p-datatable-sm">
-    <ng-template pTemplate="header">
-      <tr>
-        <th class="header-cell">Producto</th>
-        <th class="header-cell">Marca</th>
-        <th class="header-cell">Cantidad</th>
-        <th class="header-cell">Total</th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-prod>
-      <tr>
-        <td>{{ prod.nombre }}</td>
-        <td>{{ prod.marca }}</td>
-        <td class="text-right">{{ prod.cantidadVendida }}</td>
-        <td class="text-right">{{ prod.totalVenta | currency }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
+  </mat-card-content>
 </mat-card>
-<mat-card>
-  <p-card header="📊 Resumen de productos más vendidos">
-    <p-chart type="bar" [data]="grafico" [options]="chartOptions"></p-chart>
-  </p-card>
-</mat-card>
+
+<!-- Gráficos mejorados -->
+<div class="graficos-container">
+  <mat-card class="grafico-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>bar_chart</mat-icon>
+        Ventas por Producto
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p-chart type="bar" [data]="graficoVentas" [options]="chartOptionsVentas"></p-chart>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="grafico-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>donut_small</mat-icon>
+        Distribución por Marca
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p-chart type="doughnut" [data]="graficoMarcas" [options]="chartOptionsMarcas"></p-chart>
+    </mat-card-content>
+  </mat-card>
+</div>

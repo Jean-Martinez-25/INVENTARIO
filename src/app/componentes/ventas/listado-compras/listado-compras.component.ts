@@ -139,7 +139,7 @@ export class ListadoComprasComponent implements OnInit {
       width: '70%',
       data: {
         numFactura: numFactura,
-        tipo: 'compra' // Agregar tipo para distinguir en el componente
+        tipo: 2 // Agregar tipo para distinguir en el componente
       }
     });
   }

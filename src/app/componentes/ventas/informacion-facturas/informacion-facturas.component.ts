@@ -14,9 +14,10 @@ export class InformacionFacturasComponent implements OnInit {
   // Datos de la factura
   numFactura: number = 0;
   numeroFactura: string = '';
+  tipo: number = 0;
   fechaFactura: Date = new Date();
   clienteNombre: string = '';
-  
+
   // Productos de la factura
   detallesFactura: DetalleFactura[] = [];
 
@@ -37,12 +38,13 @@ export class InformacionFacturasComponent implements OnInit {
   ngOnInit(): void {
     // Obtener el número de factura desde la configuración del diálogo
     this.numFactura = this.config.data?.numFactura || 0;
+    this.tipo = this.config.data?.tipo;
     this.numeroFactura = this.numFactura.toString();
-    
+
     // Obtener datos adicionales si están disponibles
     this.clienteNombre = this.config.data?.clienteNombre || 'Cliente';
     this.fechaFactura = this.config.data?.fechaFactura ? new Date(this.config.data.fechaFactura) : new Date();
-    
+
     // Buscar información de la factura
     if (this.numFactura > 0) {
       this.buscarInformacion(this.numFactura);
@@ -56,19 +58,35 @@ export class InformacionFacturasComponent implements OnInit {
   buscarInformacion(numFactura: number): void {
     this.loading = true;
     this.error = null;
-    
-    this._ventaService.obtenrInfoVentas(numFactura).subscribe({
-      next: (data: DetalleFactura[]) => {
-        this.detallesFactura = data;
-        this.calcularTotales();
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error al obtener datos de ventas', err);
-        this.error = 'Error al cargar la información de la factura. Por favor, intente nuevamente.';
-        this.loading = false;
-      }
-    });
+
+    if (this.tipo == 1) {
+      this._ventaService.obtenrInfoVentas(numFactura).subscribe({
+        next: (data: DetalleFactura[]) => {
+          this.detallesFactura = data;
+          this.calcularTotales();
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Error al obtener datos de ventas', err);
+          this.error = 'Error al cargar la información de la factura. Por favor, intente nuevamente.';
+          this.loading = false;
+        }
+      });
+    }else if(this.tipo == 2){
+      this._ventaService.obtenrInfoCompras(numFactura).subscribe({
+        next: (data: DetalleFactura[]) => {
+          this.detallesFactura = data;
+          this.calcularTotales();
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Error al obtener datos de ventas', err);
+          this.error = 'Error al cargar la información de la factura. Por favor, intente nuevamente.';
+          this.loading = false;
+        }
+      });
+    }
+
   }
 
   /**
@@ -194,10 +212,10 @@ export class InformacionFacturasComponent implements OnInit {
     }
 
     const productos = this.detallesFactura;
-    const productoMasCaro = productos.reduce((prev, current) => 
+    const productoMasCaro = productos.reduce((prev, current) =>
       (prev.precio > current.precio) ? prev : current
     );
-    const productoMasVendido = productos.reduce((prev, current) => 
+    const productoMasVendido = productos.reduce((prev, current) =>
       (prev.cantidad > current.cantidad) ? prev : current
     );
 
