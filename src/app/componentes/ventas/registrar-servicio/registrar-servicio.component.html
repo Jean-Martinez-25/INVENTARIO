@@ -1,0 +1,248 @@
+<div class="table">
+    <div class="content">
+        <div class="service-registration-container">
+            <p-card header="Registro de servicios" styleClass="service-card">
+                <form [formGroup]="compraForm" class="service-form">
+                    <!-- Sección de información básica -->
+                    <div class="form-section">
+                        <h3 class="section-title">Información del Servicio</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="cliente" class="required-field">Cliente</label>
+                                <p-dropdown id="cliente" [options]="clientes" optionLabel="nombre"
+                                    formControlName="cliente" placeholder="Selecciona un cliente" [showClear]="true"
+                                    styleClass="w-full">
+                                </p-dropdown>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="empleados" class="required-field">Empleados</label>
+                                <p-dropdown id="empleados" [options]="empleados" optionLabel="nombre"
+                                    formControlName="empleados" placeholder="Selecciona un empleado" [showClear]="true"
+                                    styleClass="w-full" (onChange)="onEmpleadoFechaChange()">
+                                </p-dropdown>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="servicio" class="required-field">Servicios</label>
+                                <p-dropdown id="servicio" [options]="servicios" optionLabel="nombre" [filter]="true"
+                                    placeholder="Selecciona un servicio" formControlName="servicio" [showClear]="true"
+                                    (onChange)="onServicioChange($event.value)" styleClass="w-full">
+                                </p-dropdown>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="fechaHora" class="required-field">Fecha y hora</label>
+                                <p-calendar formControlName="fechaHora" [showTime]="true" hourFormat="24"
+                                    [showIcon]="true" [touchUI]="false" placeholder="Selecciona fecha y hora"
+                                    styleClass="w-full compact-calendar" [panelStyleClass]="'compact-calendar-panel'"
+                                    (onSelect)="onEmpleadoFechaChange()">
+                                </p-calendar>
+                            </div>
+
+                            <div class="form-field full-width">
+                                <label>Descripción</label>
+                                <input type="text" pInputText [value]="descripcionSeleccionada" readonly class="w-full">
+                            </div>
+
+                            <div class="form-field">
+                                <label>Precio</label>
+                                <input type="text" pInputText [value]="precioSeleccionado" readonly class="w-full">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de métodos de pago -->
+                    <div class="form-section">
+                        <h3 class="section-title">Métodos de Pago</h3>
+                        <div class="form-field">
+                            <label for="cantidadMetodosPago">¿Cuántos métodos de pago vas a usar?</label>
+                            <p-dropdown id="cantidadMetodosPago" [options]="opcionesCantidadPago"
+                                placeholder="Selecciona una cantidad"
+                                (onChange)="actualizarCantidadMetodosPago($event.value)"
+                                styleClass="payment-methods-selector">
+                            </p-dropdown>
+                        </div>
+
+                        <div class="payment-methods-container" *ngIf="metodosPago.controls.length > 0">
+                            <div *ngFor="let metodo of metodosPago.controls; let i = index"
+                                [formGroup]="getMetodoFormGroup(i)" class="payment-method-item">
+                                <div class="payment-method-grid">
+                                    <div class="form-field">
+                                        <label>Método de pago {{ i + 1 }}</label>
+                                        <p-dropdown [options]="metodosPagos" optionLabel="nombre" optionValue="id"
+                                            formControlName="tipo" placeholder="Selecciona un método"
+                                            styleClass="w-full">
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Valor</label>
+                                        <input type="number" pInputText formControlName="valor"
+                                            placeholder="Valor a pagar" class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de productos -->
+                    <div class="form-section">
+                        <h3 class="section-title">Productos</h3>
+                        <div class="products-table-container">
+                            <p-table [value]="productos.controls" [tableStyle]="{ 'min-width': '100%' }"
+                                responsiveLayout="scroll" styleClass="products-table">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="table-header">#</th>
+                                        <th class="table-header">Código</th>
+                                        <th class="table-header">Descripción</th>
+                                        <th class="table-header">Cantidad</th>
+                                        <th class="table-header">Precio</th>
+                                        <th class="table-header">IVA</th>
+                                        <th class="table-header">Descuento</th>
+                                        <th class="table-header">Total</th>
+                                        <th class="table-header">Acción</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-producto let-rowIndex="rowIndex">
+                                    <tr class="table-row">
+                                        <td class="table-cell">{{ rowIndex + 1 }}</td>
+                                        <td class="table-cell">{{ producto.get('codigo')?.value }}</td>
+                                        <td class="table-cell">{{ producto.get('descripcion')?.value }}</td>
+                                        <td class="table-cell">{{ producto.get('cantidad')?.value }}</td>
+                                        <td class="table-cell">{{ producto.get('precio')?.value | currency:'COP' }}</td>
+                                        <td class="table-cell">{{ producto.get('iva')?.value }}%</td>
+                                        <td class="table-cell">{{ producto.get('descuento')?.value }}%</td>
+                                        <td class="table-cell font-bold">{{ producto.get('total')?.value |
+                                            currency:'COP' }}</td>
+                                        <td class="table-cell">
+                                            <button pButton icon="pi pi-trash"
+                                                class="p-button-danger p-button-sm action-button"
+                                                (click)="eliminarProducto(rowIndex)" type="button"
+                                                pTooltip="Eliminar producto">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr class="table-footer">
+                                        <td colspan="7" class="table-total-label">Subtotal:</td>
+                                        <td colspan="2" class="table-total-value">{{ totalGeneral | currency:'COP' }}
+                                        </td>
+                                    </tr>
+                                    <tr class="table-footer" *ngIf="gananciaPorcentaje > 0">
+                                        <td colspan="7" class="table-total-label">
+                                            Ganancia adicional ({{ gananciaPorcentaje }}%):
+                                        </td>
+                                        <td colspan="2" class="table-total-value">{{ valorGanancia | currency:'COP' }}
+                                        </td>
+                                    </tr>
+                                    <tr class="table-footer final-total">
+                                        <td colspan="7" class="table-total-label">Total General:</td>
+                                        <td colspan="2" class="table-total-value">{{ totalConGanancia | currency:'COP'
+                                            }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+
+                        <!-- Sección de ganancia adicional -->
+                        <div class="profit-section" *ngIf="productos.controls.length > 0">
+                            <div class="profit-checkbox">
+                                <p-checkbox id="deseaGanancia" binary="true" formControlName="deseaGanancia"
+                                    (onChange)="onGananciaChange($event)">
+                                </p-checkbox>
+                                <label for="deseaGanancia" class="profit-label">¿Desea tener más ganancia?</label>
+                            </div>
+
+                            <div class="profit-dropdown" *ngIf="compraForm.get('deseaGanancia')?.value">
+                                <label for="porcentajeGanancia">Porcentaje de ganancia</label>
+                                <p-dropdown id="porcentajeGanancia" [options]="opcionesPorcentaje" optionLabel="label"
+                                    optionValue="value" formControlName="porcentajeGanancia"
+                                    placeholder="Selecciona un porcentaje" (onChange)="onPorcentajeChange($event.value)"
+                                    styleClass="w-full">
+                                </p-dropdown>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="action-buttons">
+                            <button pButton label="Agregar producto" icon="pi pi-plus"
+                                class="p-button-success action-btn" (click)="abrirDialogoProducto()" type="button">
+                            </button>
+                            <button pButton label="Generar venta" icon="pi pi-save" class="p-button-primary action-btn"
+                                (click)="guardarServicioPrestado()" type="button">
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </p-card>
+
+            <!-- Dialog para agregar producto -->
+            <p-dialog header="Agregar Producto" [(visible)]="productoDialogVisible" [modal]="true" [responsive]="true"
+                [style]="{ width: '500px' }" styleClass="product-dialog">
+                <form [formGroup]="productoForm" class="product-form">
+                    <div class="dialog-form-grid">
+                        <div class="form-field full-width">
+                            <label for="codigo">Producto</label>
+                            <p-autoComplete id="codigo" [suggestions]="productosFiltrados"
+                                (completeMethod)="filtrarProductos($event)" field="nombre" [dropdown]="true"
+                                [forceSelection]="true" [minLength]="1" formControlName="codigo"
+                                (onSelect)="productoSeleccionado($event.value)" styleClass="w-full">
+                                <ng-template let-producto pTemplate="item">
+                                    <div class="product-item">
+                                        <span class="product-code">{{ producto.codigo }}</span>
+                                        <span class="product-name">{{ producto.nombre }}</span>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                        </div>
+
+                        <div class="form-field full-width">
+                            <label for="descripcion">Descripción</label>
+                            <input id="descripcion" type="text" pInputText formControlName="descripcion"
+                                class="w-full" />
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cantidad">Cantidad</label>
+                            <input id="cantidad" type="number" pInputText formControlName="cantidad" class="w-full" />
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cantidadProducto">Cantidad disponible</label>
+                            <input id="cantidadProducto" type="number" pInputText formControlName="cantidadProducto"
+                                readonly class="w-full" />
+                        </div>
+
+                        <div class="form-field">
+                            <label for="precio">Precio</label>
+                            <input id="precio" type="number" pInputText formControlName="precio" class="w-full" />
+                        </div>
+
+                        <div class="form-field">
+                            <label for="descuento">Descuento (%)</label>
+                            <input id="descuento" type="number" pInputText formControlName="descuento" min="0" max="100"
+                                class="w-full" />
+                        </div>
+
+                        <div class="form-field">
+                            <label for="iva">IVA (%)</label>
+                            <input id="iva" type="number" pInputText formControlName="iva" readonly class="w-full" />
+                        </div>
+                    </div>
+
+                    <div class="dialog-actions">
+                        <button pButton label="Cancelar" icon="pi pi-times" class="p-button-secondary dialog-btn"
+                            (click)="productoDialogVisible = false" type="button">
+                        </button>
+                        <button pButton label="Agregar" icon="pi pi-check" class="p-button-success dialog-btn"
+                            (click)="confirmarAgregarProducto()" type="button">
+                        </button>
+                    </div>
+                </form>
+            </p-dialog>
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>

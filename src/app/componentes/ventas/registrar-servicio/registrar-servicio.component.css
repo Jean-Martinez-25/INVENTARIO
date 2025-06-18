@@ -1,0 +1,439 @@
+/* =================================
+   CONTENEDOR PRINCIPAL
+   ================================= */
+.service-registration-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.service-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* =================================
+   FORMULARIO BASE
+   ================================= */
+.service-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* =================================
+   SECCIONES DEL FORMULARIO
+   ================================= */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.section-title {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+}
+
+/* =================================
+   GRID DE CAMPOS
+   ================================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.dialog-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+/* =================================
+   CAMPOS DEL FORMULARIO
+   ================================= */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  font-weight: 500;
+  color: #34495e;
+  font-size: 0.9rem;
+}
+
+.required-field::after {
+  content: " *";
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.w-full {
+  width: 100% !important;
+}
+
+/* =================================
+   MÉTODOS DE PAGO
+   ================================= */
+.payment-methods-selector {
+  max-width: 300px;
+}
+
+.payment-methods-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.payment-method-item {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.payment-method-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: end;
+}
+
+/* =================================
+   TABLA DE PRODUCTOS
+   ================================= */
+.products-table-container {
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.products-table {
+  min-width: 800px;
+}
+
+.table-header {
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 1rem 0.75rem !important;
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.table-row:hover {
+  background-color: #f8f9fa !important;
+}
+
+.table-cell {
+  text-align: center !important;
+  padding: 0.75rem !important;
+  vertical-align: middle !important;
+}
+
+.table-footer {
+  background: #e9ecef !important;
+  font-weight: 500 !important;
+}
+
+.table-total-label {
+  text-align: right !important;
+  font-weight: 600 !important;
+  padding: 0.75rem !important;
+}
+
+.table-total-value {
+  text-align: center !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  padding: 0.75rem !important;
+}
+
+.final-total {
+  background: #d4edda !important;
+}
+
+.final-total .table-total-value {
+  color: #155724 !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+}
+
+.action-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* =================================
+   SECCIÓN DE GANANCIAS
+   ================================= */
+.profit-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  margin-top: 1rem;
+}
+
+.profit-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.profit-label {
+  font-weight: 500;
+  color: #34495e;
+  margin: 0;
+  cursor: pointer;
+}
+
+.profit-dropdown {
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* =================================
+   BOTONES DE ACCIÓN
+   ================================= */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.action-btn {
+  min-width: 140px;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+}
+
+/* =================================
+   DIÁLOGO DE PRODUCTO
+   ================================= */
+.product-dialog .p-dialog-content {
+  padding: 1.5rem !important;
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.product-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.product-code {
+  font-weight: 600;
+  color: #3498db;
+  font-size: 0.9rem;
+}
+
+.product-name {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.dialog-btn {
+  min-width: 100px;
+  padding: 0.5rem 1rem !important;
+}
+
+/* =================================
+   UTILIDADES
+   ================================= */
+.font-bold {
+  font-weight: 600 !important;
+}
+
+/* =================================
+   PERSONALIZACIÓN DE PRIMENG
+   ================================= */
+::ng-deep .p-datepicker {
+  max-width: 350px !important;
+}
+
+::ng-deep .p-dropdown-panel {
+  max-width: 400px;
+}
+
+::ng-deep .p-autocomplete-panel {
+  max-width: 450px;
+}
+
+::ng-deep .p-card .p-card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+::ng-deep .p-card .p-card-body {
+  padding: 1.5rem;
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
+@media (max-width: 768px) {
+  .service-registration-container {
+    padding: 0.5rem;
+  }
+  
+  .form-section {
+    padding: 1rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .payment-method-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    justify-content: center;
+  }
+  
+  .action-btn {
+    min-width: 120px;
+  }
+  
+  .dialog-actions {
+    flex-direction: column;
+  }
+  
+  .dialog-btn {
+    width: 100%;
+  }
+  
+  .profit-section {
+    align-items: flex-start;
+  }
+  
+  .profit-dropdown {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-table {
+    font-size: 0.8rem;
+  }
+  
+  .table-header,
+  .table-cell {
+    padding: 0.5rem 0.25rem !important;
+  }
+  
+  .section-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* =================================
+   ESTADOS DE HOVER Y FOCUS
+   ================================= */
+.form-field:hover label {
+  color: #2c3e50;
+}
+
+::ng-deep .p-inputtext:focus,
+::ng-deep .p-dropdown:focus,
+::ng-deep .p-calendar:focus {
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
+}
+
+::ng-deep .p-button:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+/* =================================
+   ANIMACIONES
+   ================================= */
+.form-section {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+::ng-deep .compact-calendar .p-calendar {
+    width: 100% !important;
+}
+
+::ng-deep .compact-calendar-panel {
+    transform: scale(0.85) !important;
+    transform-origin: top left !important;
+}
+
+::ng-deep .compact-calendar-panel .p-datepicker {
+    font-size: 0.875rem !important;
+}
+
+::ng-deep .compact-calendar-panel .p-datepicker table td {
+    padding: 0.25rem !important;
+}
+
+::ng-deep .compact-calendar-panel .p-datepicker .p-datepicker-header {
+    padding: 0.5rem !important;
+}
+
+::ng-deep .compact-calendar-panel .p-timepicker {
+    padding: 0.5rem !important;
+}
+
+::ng-deep .compact-calendar-panel .p-timepicker .p-hour-picker,
+::ng-deep .compact-calendar-panel .p-timepicker .p-minute-picker {
+    font-size: 0.875rem !important;
+}

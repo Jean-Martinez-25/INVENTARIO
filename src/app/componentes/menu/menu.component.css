@@ -8,7 +8,7 @@
   color: #fff;
   display: flex;
   flex-direction: column;
-  height: 100%; 
+  height: 100%;
 }
 
 .sidenav-header {
@@ -44,7 +44,7 @@
 }
 
 .menu-icon {
-  font-size: 24px; 
+  font-size: 24px;
   margin-right: 16px;
   color: #fff;
 }
@@ -55,7 +55,8 @@
 
 .expand-icon {
   font-size: 20px;
-  color: #fff;;
+  color: #fff;
+  ;
 }
 
 .submenu {
@@ -76,11 +77,11 @@
 }
 
 .menu-list {
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .logout-container {
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 .menu-item.logout {
@@ -96,4 +97,97 @@
 .menu-item.logout:hover {
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 8px;
+}
+
+.logo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #2E4BC6, #1E3A8A);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(46, 75, 198, 0.3);
+  overflow: hidden;
+}
+
+.logo::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.text-container {
+  text-align: center;
+  color: white;
+  z-index: 10;
+  position: relative;
+}
+
+.main-text {
+  font-size: 10px;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+  font-size: 8px;
+  margin: 0;
+  margin-top: 5px;
+  font-weight: normal;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tagline {
+  font-size: 8px;
+  margin: 0;
+  margin-top: 8px;
+  font-weight: normal;
+  opacity: 0.9;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Efecto hover */
+.logo:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(46, 75, 198, 0.4);
+  transition: all 0.3s ease;
+}
+
+.logo:hover .fan-blade {
+  animation-duration: 0.5s;
 }

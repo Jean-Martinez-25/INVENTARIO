@@ -1,0 +1,267 @@
+<div class="table">
+    <div class="content">
+        <section class="services-dashboard">
+            <header class="dashboard-header">
+                <h1 class="dashboard-title">
+                    <mat-icon svgIcon="services_icon" class="title-icon"></mat-icon> 
+                    Servicios Actuales
+                </h1>
+                <p class="dashboard-subtitle">Gestión y seguimiento de servicios en progreso</p>
+            </header>
+
+            <div class="filters-search-section">
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-icon matPrefix>search</mat-icon> 
+                    <input matInput type="text" 
+                           placeholder="Buscar por cliente, empleado o tipo de servicio..."
+                           [(ngModel)]="searchTerm" 
+                           (input)="filtrarServicios()">
+                </mat-form-field>
+
+                <div class="filter-buttons-group">
+                    <button mat-stroked-button 
+                            [class.active]="filtroEstado === ''" 
+                            (click)="filtrarPorEstado('')">
+                        <span class="filter-count">{{ servicios.length }}</span>
+                        Todos
+                    </button>
+                    <button mat-stroked-button 
+                            class="status-pending" 
+                            [class.active]="filtroEstado === 'Pendiente'"
+                            (click)="filtrarPorEstado('Pendiente')">
+                        <span class="filter-count">{{ getServiciosPorEstado('Pendiente') }}</span>
+                        Pendientes
+                    </button>
+                    <button mat-stroked-button 
+                            class="status-in-progress" 
+                            [class.active]="filtroEstado === 'En Progreso'"
+                            (click)="filtrarPorEstado('En Progreso')">
+                        <span class="filter-count">{{ getServiciosPorEstado('En Progreso') }}</span>
+                        En Progreso
+                    </button>
+                    <button mat-stroked-button 
+                            class="status-completed" 
+                            [class.active]="filtroEstado === 'Completado'"
+                            (click)="filtrarPorEstado('Completado')">
+                        <span class="filter-count">{{ getServiciosPorEstado('Completado') }}</span>
+                        Completados
+                    </button>
+                </div>
+            </div>
+
+            <div *ngIf="isLoading" class="loading-state">
+                <mat-spinner diameter="50"></mat-spinner> 
+                <p>Cargando servicios...</p>
+            </div>
+
+            <div *ngIf="!isLoading" class="table-section">
+                <p-table [value]="serviciosFiltrados" [responsive]="true" [paginator]="true" [rows]="10" 
+                         [showCurrentPageReport]="true" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} servicios"
+                         [rowsPerPageOptions]="[10,25,50]" *ngIf="serviciosFiltrados.length > 0">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
+                            <th>Empleado</th>
+                            <th>Fecha</th>
+                            <th>Dirección</th>
+                            <th>Valor</th>
+                            <th>Estado</th>
+                            <th>Factura</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-servicio>
+                        <tr>
+                            <td>
+                                <div class="client-info">
+                                    <div class="client-avatar">{{ getInitials(servicio.nombreCliente) }}</div>
+                                    <div class="client-details">
+                                        <span class="client-name">{{ servicio.nombreCliente || 'Sin nombre' }}</span>
+                                        <span class="client-phone" *ngIf="servicio.telefono">{{ servicio.telefono }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="service-info">
+                                    <span class="service-type" [pTooltip]="servicio.descripcion">{{ servicio.tipoServicio || 'Sin especificar' }}</span>
+                                    <span class="service-description" *ngIf="servicio.descripcion">{{ servicio.descripcion }}</span>
+                                </div>
+                            </td>
+                            <td>{{ servicio.nombreEmpleado || 'Sin asignar' }}</td>
+                            <td>
+                                <div class="date-info">
+                                    <span class="date-primary">{{ servicio.fechaPrestar | date:'dd/MM/yyyy hh:mm a' }}</span>
+                                </div>
+                                
+                            </td>
+                            <td>
+                                <span class="address-text" [title]="servicio.direccionRealizar">
+                                    <mat-icon svgIcon="location_icon" class="address-icon"></mat-icon> 
+                                    {{ servicio.direccionRealizar || 'Sin dirección' }}
+                                </span>
+                            </td>
+                            <td><span class="value-amount">{{ formatCurrency(servicio.valor) }}</span></td>
+                            <td>
+                                <span class="status-badge" [ngClass]="getStatusClass(servicio.estadoServicio)">
+                                    <span class="status-dot"></span>
+                                    {{ servicio.estadoServicio }}
+                                </span>
+                            </td>
+                            <td>{{ servicio.numFactura || 'Sin factura' }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button mat-icon-button color="primary" 
+                                            title="Ver detalles" 
+                                            (click)="abrirModal(servicio, 'ver')">
+                                        <mat-icon>visibility</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="accent" 
+                                            title="Editar" 
+                                            (click)="abrirModal(servicio, 'editar')">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr *ngIf="serviciosFiltrados.length === 0">
+                            <td colspan="9">
+                                <div class="empty-state">
+                                    <mat-icon svgIcon="no_data_icon" class="empty-icon"></mat-icon>
+                                    <h3>No hay servicios disponibles</h3>
+                                    <p>No se encontraron servicios que coincidan con los filtros aplicados.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+                <div *ngIf="serviciosFiltrados.length === 0 && !isLoading" class="empty-state-standalone">
+                    <mat-icon svgIcon="no_data_icon" class="empty-icon"></mat-icon>
+                    <h3>No hay servicios disponibles</h3>
+                    <p>No se encontraron servicios que coincidan con los filtros aplicados.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div *ngIf="mostrarModal" class="modal-overlay" (click)="onModalOverlayClick($event)">
+    <mat-card class="modal-container" *ngIf="servicioSeleccionado">
+        <mat-card-header class="modal-header">
+            <mat-card-title class="modal-title-section">
+                <mat-icon *ngIf="!modoEdicion" class="modal-icon">visibility</mat-icon>
+                <mat-icon *ngIf="modoEdicion" class="modal-icon">edit</mat-icon>
+                <h2 class="modal-title">{{ modoEdicion ? 'Editar Servicio' : 'Detalles del Servicio' }}</h2>
+                <span class="modal-subtitle">ID: {{ servicioSeleccionado.id }}</span>
+            </mat-card-title>
+            <button mat-icon-button class="modal-close-btn" (click)="cerrarModal()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-card-header>
+
+        <mat-card-content class="modal-content">
+            <form class="modal-form">
+                <mat-card class="form-section">
+                    <mat-card-header>
+                        <mat-card-title class="section-title">
+                            <mat-icon>person</mat-icon>
+                            <h3>Información del Cliente</h3>
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="form-grid">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Cliente</mat-label>
+                                <input matInput [(ngModel)]="servicioSeleccionado.nombreCliente" 
+                                       name="nombreCliente" 
+                                       [readonly]="!modoEdicion" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <mat-card class="form-section">
+                    <mat-card-header>
+                        <mat-card-title class="section-title">
+                            <mat-icon>build</mat-icon>
+                            <h3>Detalles del Servicio</h3>
+                        </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="form-grid">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Tipo de Servicio</mat-label>
+                                <input matInput [(ngModel)]="servicioSeleccionado.tipoServicio" 
+                                       name="tipoServicio" 
+                                       [readonly]="!modoEdicion" disabled="true">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Empleado Asignado</mat-label>
+                                <input matInput [(ngModel)]="servicioSeleccionado.nombreEmpleado" 
+                                       name="nombreEmpleado" 
+                                       [readonly]="!modoEdicion" disabled="true">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Fecha y Hora</mat-label>
+                                <input matInput type="datetime-local" 
+                                       [ngModel]="servicioSeleccionado.fechaPrestar | date:'yyyy-MM-ddTHH:mm'" 
+                                       (ngModelChange)="servicioSeleccionado.fechaPrestar = $event"
+                                       name="fechaPrestar"
+                                       [readonly]="!modoEdicion">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Estado</mat-label>
+                                <mat-select [(ngModel)]="servicioSeleccionado.estadoServicio" 
+                                            name="estadoServicio"
+                                            [disabled]="!modoEdicion">
+                                    <mat-option value="Pendiente">Pendiente</mat-option>
+                                    <mat-option value="En Progreso">En Progreso</mat-option>
+                                    <mat-option value="Completado">Completado</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Dirección</mat-label>
+                                <textarea matInput [(ngModel)]="servicioSeleccionado.direccionRealizar" 
+                                          name="direccionRealizar"
+                                          [readonly]="!modoEdicion" 
+                                          rows="2" disabled="true"></textarea>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Valor</mat-label>
+                                <input matInput type="number" 
+                                       [(ngModel)]="servicioSeleccionado.valor" 
+                                       name="valor"
+                                       [readonly]="!modoEdicion" disabled="true">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>N° Factura</mat-label>
+                                <input matInput [(ngModel)]="servicioSeleccionado.numFactura" 
+                                       name="numFactura"
+                                       [readonly]="!modoEdicion" disabled="true">
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </form>
+        </mat-card-content>
+
+        <mat-card-actions class="modal-footer">
+            <button mat-button (click)="cerrarModal()">
+                Cancelar
+            </button>
+            <button mat-raised-button color="primary" *ngIf="!modoEdicion" (click)="modoEdicion = true">
+                <mat-icon>edit</mat-icon>
+                Editar
+            </button>
+            <button mat-raised-button color="accent" *ngIf="modoEdicion" (click)="guardarCambios()" [disabled]="guardandoCambios">
+                <mat-spinner *ngIf="guardandoCambios" diameter="20"></mat-spinner>
+                <mat-icon *ngIf="!guardandoCambios">save</mat-icon>
+                {{ guardandoCambios ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>
+<p-toast></p-toast>

@@ -95,8 +95,7 @@ export class InformacionFacturasComponent implements OnInit {
   private calcularTotales(): void {
     if (this.detallesFactura && this.detallesFactura.length > 0) {
       this.subtotal = this.detallesFactura.reduce((sum, item) => sum + item.total, 0);
-      this.iva = this.subtotal * 0.19; // IVA del 19%
-      this.totalFactura = this.subtotal + this.iva;
+      this.totalFactura = this.subtotal;
     } else {
       this.subtotal = 0;
       this.iva = 0;

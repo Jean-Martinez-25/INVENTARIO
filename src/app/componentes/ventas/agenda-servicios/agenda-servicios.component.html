@@ -1,0 +1,239 @@
+<div class="table">
+    <div class="content">
+        <div class="agenda-container">
+            <!-- Header -->
+            <div class="header-section">
+                <h1 class="title">
+                    <mat-icon class="title-icon">event_note</mat-icon>
+                    Agenda de Servicios
+                </h1>
+
+                <!-- Filtros -->
+                <div class="filters-section">
+                    <div class="filter-item">
+                        <label>Fecha:</label>
+                        <p-calendar [(ngModel)]="fechaSeleccionada" dateFormat="dd/mm/yy"
+                            placeholder="Seleccionar fecha" (onSelect)="filtrarPorFecha()" [showIcon]="true">
+                        </p-calendar>
+                    </div>
+
+                    <div class="filter-item">
+                        <label>Estado:</label>
+                        <p-dropdown [(ngModel)]="estadoSeleccionado" [options]="estadosServicio"
+                            placeholder="Todos los estados" optionLabel="label" optionValue="value"
+                            (onChange)="filtrarServicios()">
+                        </p-dropdown>
+                    </div>
+
+                    <p-button label="Limpiar Filtros" icon="pi pi-filter-slash" severity="secondary"
+                        (onClick)="limpiarFiltros()">
+                    </p-button>
+                </div>
+            </div>
+
+            <!-- Tabs por Vista -->
+            <mat-tab-group class="vista-tabs">
+                <!-- Vista Timeline -->
+                <mat-tab label="Vista Timeline">
+                    <div class="timeline-container">
+                        <p-timeline [value]="serviciosFiltrados" layout="vertical" align="alternate"
+                            styleClass="custom-timeline">
+
+                            <ng-template pTemplate="marker" let-servicio>
+                                <div class="timeline-marker" [ngClass]="getEstadoClass(servicio.estadoServicio)">
+                                    <mat-icon>{{ getEstadoIcon(servicio.estadoServicio) }}</mat-icon>
+                                </div>
+                            </ng-template>
+
+                            <ng-template pTemplate="content" let-servicio>
+                                <p-card class="servicio-card">
+                                    <ng-template pTemplate="header">
+                                        <div class="card-header">
+                                            <div class="servicio-info">
+                                                <h3>{{ servicio.tipoServicio }}</h3>
+                                                <p class="cliente-nombre">{{ servicio.nombreCliente }}</p>
+                                            </div>
+                                            <div class="servicio-tags">
+                                                <p-tag [value]="getEstadoLabel(servicio.estadoServicio)"
+                                                    [severity]="getEstadoSeverity(servicio.estadoServicio)">
+                                                </p-tag>
+                                                <mat-chip-set>
+                                                    <mat-chip>$ {{ servicio.valor | number:'1.0-0' }}</mat-chip>
+                                                </mat-chip-set>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="content">
+                                        <div class="servicio-details">
+                                            <div class="detail-row">
+                                                <mat-icon>person</mat-icon>
+                                                <span><strong>Empleado:</strong> {{ servicio.nombreEmpleado }}</span>
+                                            </div>
+
+                                            <div class="detail-row">
+                                                <mat-icon>schedule</mat-icon>
+                                                <span><strong>Fecha:</strong> {{ servicio.fechaPrestar |
+                                                    date:'dd/MM/yyyy HH:mm' }}</span>
+                                            </div>
+
+                                            <div class="detail-row">
+                                                <mat-icon>location_on</mat-icon>
+                                                <span><strong>Dirección:</strong> {{ servicio.direccionRealizar
+                                                    }}</span>
+                                            </div>
+
+                                            <div class="detail-row">
+                                                <mat-icon>phone</mat-icon>
+                                                <span><strong>Teléfono:</strong> {{ servicio.telefono }}</span>
+                                            </div>
+
+                                            <div class="detail-row" *ngIf="servicio.descripcion">
+                                                <mat-icon>description</mat-icon>
+                                                <span><strong>Descripción:</strong> {{ servicio.descripcion }}</span>
+                                            </div>
+
+                                            <div class="detail-row">
+                                                <mat-icon>receipt</mat-icon>
+                                                <span><strong>Factura #:</strong> {{ servicio.numFactura }}</span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="footer">
+                                        <div class="card-actions">
+                                            <p-button label="Ver Detalles" icon="pi pi-eye" severity="info" size="small"
+                                                (onClick)="verDetalles(servicio)">
+                                            </p-button>
+                                            <p-button label="Editar" icon="pi pi-pencil" severity="secondary"
+                                                size="small" (onClick)="editarServicio(servicio)">
+                                            </p-button>
+                                        </div>
+                                    </ng-template>
+                                </p-card>
+                            </ng-template>
+                        </p-timeline>
+                    </div>
+                </mat-tab>
+
+                <!-- Vista Cards -->
+                <mat-tab label="Vista Cards">
+                    <div class="cards-container">
+                        <div class="cards-grid">
+                            <p-card *ngFor="let servicio of serviciosFiltrados" class="servicio-card-grid">
+
+                                <ng-template pTemplate="header">
+                                    <div class="card-header-grid">
+                                        <div class="servicio-tipo">
+                                            <mat-icon class="tipo-icon">build</mat-icon>
+                                            <h3>{{ servicio.tipoServicio }}</h3>
+                                        </div>
+                                        <p-tag [value]="getEstadoLabel(servicio.estadoServicio)"
+                                            [severity]="getEstadoSeverity(servicio.estadoServicio)">
+                                        </p-tag>
+                                    </div>
+                                </ng-template>
+
+                                <ng-template pTemplate="content">
+                                    <div class="card-content-grid">
+                                        <div class="cliente-section">
+                                            <h4>{{ servicio.nombreCliente }}</h4>
+                                            <p class="fecha">{{ servicio.fechaPrestar | date:'dd/MM/yyyy HH:mm' }}</p>
+                                        </div>
+
+                                        <div class="empleado-valor">
+                                            <span class="empleado">{{ servicio.nombreEmpleado }}</span>
+                                            <span class="valor">$ {{ servicio.valor | number:'1.0-0' }}</span>
+                                        </div>
+
+                                        <div class="ubicacion">
+                                            <mat-icon>location_on</mat-icon>
+                                            <span>{{ servicio.direccionRealizar }}</span>
+                                        </div>
+                                    </div>
+                                </ng-template>
+
+                                <ng-template pTemplate="footer">
+                                    <div class="card-actions">
+                                        <p-button icon="pi pi-phone" severity="success" size="small"
+                                            [pTooltip]="servicio.telefono" tooltipPosition="top">
+                                        </p-button>
+                                        <p-button icon="pi pi-eye" severity="info" size="small"
+                                            (onClick)="verDetalles(servicio)">
+                                        </p-button>
+                                        <p-button icon="pi pi-pencil" severity="secondary" size="small"
+                                            (onClick)="editarServicio(servicio)">
+                                        </p-button>
+                                    </div>
+                                </ng-template>
+                            </p-card>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+
+            <!-- Dialog de Detalles -->
+            <p-dialog [(visible)]="mostrarDetalles" [modal]="true" [style]="{width: '50vw'}"
+                header="Detalles del Servicio" [closable]="true">
+
+                <div *ngIf="servicioSeleccionado" class="dialog-content">
+                    <div class="detalle-completo">
+                        <div class="detalle-header">
+                            <h2>{{ servicioSeleccionado.tipoServicio }}</h2>
+                            <p-tag [value]="getEstadoLabel(servicioSeleccionado.estadoServicio)"
+                                [severity]="getEstadoSeverity(servicioSeleccionado.estadoServicio)">
+                            </p-tag>
+                        </div>
+
+                        <div class="detalle-grid">
+                            <div class="detalle-item">
+                                <label>Cliente:</label>
+                                <span>{{ servicioSeleccionado.nombreCliente }}</span>
+                            </div>
+
+                            <div class="detalle-item">
+                                <label>Empleado:</label>
+                                <span>{{ servicioSeleccionado.nombreEmpleado }}</span>
+                            </div>
+
+                            <div class="detalle-item">
+                                <label>Fecha y Hora:</label>
+                                <span>{{ servicioSeleccionado.fechaPrestar | date:'dd/MM/yyyy HH:mm' }}</span>
+                            </div>
+
+                            <div class="detalle-item">
+                                <label>Valor:</label>
+                                <span class="valor-grande">$ {{ servicioSeleccionado.valor | number:'1.0-0' }}</span>
+                            </div>
+
+                            <div class="detalle-item full-width">
+                                <label>Dirección:</label>
+                                <span>{{ servicioSeleccionado.direccionRealizar }}</span>
+                            </div>
+
+                            <div class="detalle-item">
+                                <label>Teléfono:</label>
+                                <span>{{ servicioSeleccionado.telefono }}</span>
+                            </div>
+
+                            <div class="detalle-item">
+                                <label>Factura #:</label>
+                                <span>{{ servicioSeleccionado.numFactura }}</span>
+                            </div>
+
+                            <div class="detalle-item full-width" *ngIf="servicioSeleccionado.descripcion">
+                                <label>Descripción:</label>
+                                <p>{{ servicioSeleccionado.descripcion }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <p-button label="Cerrar" icon="pi pi-times" severity="secondary" (onClick)="cerrarDetalles()">
+                    </p-button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div>

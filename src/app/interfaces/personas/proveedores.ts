@@ -19,6 +19,8 @@ export interface ClientesBack{
   nombre: string;
   documento: string;
   correo: string;
+  direccion: string;
+  telefono: string;
 }
 
 export interface Clientes{
@@ -27,4 +29,6 @@ export interface Clientes{
   documento: string;
   correo: string;
   fechaCreacion: string;
+  direccion: string;
+  telefono: string;
 }

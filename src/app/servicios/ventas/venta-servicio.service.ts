@@ -4,11 +4,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   CompraRequest,
+  CrearServicioPrestadoDto,
+  DatosServicio,
   DatosVenta,
   DetalleFactura,
   ListadoCompra,
   ListadoFacturasPorMes,
-  ListadoVenta
+  ListadoVenta,
+  ServiciosActuales,
+  ServiciosActualizar,
+  ServiciosAgenda
 } from '../../interfaces/venta/venta-back';
 
 @Injectable({
@@ -17,14 +22,17 @@ import {
 export class VentaServicioService {
   private webApi: string = environment.endpoint;
   private api: string = 'api/Venta';
+  private crearServicio: string = '/crear-servicio'
+  private listadoServicio: string = '/listado-servicios'
   private datosCliente: string = '/formulario-venta';
+  private datosServicios: string = '/formulario-servicio';
   private listadoVenta: string = '/listado-ventas';
   private infoVenta: string = '/info-ventas';
   private infoCompra: string = '/info-compras';
   private listadoCompra: string = '/listado-compras';
   private listadoCompraMes: string = "/listado-compras-por-mes";
   private listadoVentaMes: string = "/listado-ventas-por-mes";
-
+  private disponibilidad: string = "/verificar-disponibilidad"
   constructor(private http: HttpClient) { }
 
   // POST
@@ -35,6 +43,10 @@ export class VentaServicioService {
 
   obtenerDatos(): Observable<DatosVenta> {
     return this.http.get<DatosVenta>(`${this.webApi}${this.api}${this.datosCliente}`);
+  }
+
+  obtenerDatosServicios(): Observable<DatosServicio> {
+    return this.http.get<DatosServicio>(`${this.webApi}${this.api}${this.datosServicios}`);
   }
 
   obtenrListaVentas(): Observable<ListadoVenta[]> {
@@ -63,5 +75,31 @@ export class VentaServicioService {
   listadoVentasMes(year: number, mes: number): Observable<ListadoFacturasPorMes[]> {
     const params = new HttpParams().set('year', year).set('mes', mes);
     return this.http.get<ListadoFacturasPorMes[]>(`${this.webApi}${this.api}${this.listadoVentaMes}`, { params });
+  }
+  // Ejemplo de método en tu servicio (esto iría en tu servicio)
+  verificarDisponibilidad(empleadoId: number, fechaHora: Date): Observable<{ disponible: boolean, mensaje: string }> {
+    // Convertir la fecha a formato para comparación
+    const horaSeleccionada = fechaHora.getHours() * 60 + fechaHora.getMinutes(); // minutos desde medianoche
+    const fechaSeleccionada = new Date(fechaHora);
+    fechaSeleccionada.setHours(0, 0, 0, 0); // solo la fecha sin hora
+
+    // Hacer la petición HTTP a tu backend
+    return this.http.post<{ disponible: boolean, mensaje: string }>(`${this.webApi}${this.api}${this.disponibilidad}`, {
+      empleadoId: empleadoId,
+      fecha: fechaSeleccionada.toISOString().split('T')[0], // formato YYYY-MM-DD
+      hora: fechaHora.toTimeString().split(' ')[0] // formato HH:MM:SS
+    });
+  }
+  crearServicioPrestado(dto: CrearServicioPrestadoDto) {
+    return this.http.post<{ mensaje: string }>(`${this.webApi}${this.api}${this.crearServicio}`, dto);
+  }
+  listadoServicios(): Observable<ServiciosActuales[]> {
+    return this.http.get<ServiciosActuales[]>(`${this.webApi}${this.api}${this.listadoServicio}`)
+  }
+  listadoServiciosAgenda(): Observable<ServiciosAgenda[]> {
+    return this.http.get<ServiciosAgenda[]>(`${this.webApi}${this.api}${this.listadoServicio}`)
+  }
+  actualizarServicio(servicio: ServiciosActualizar): Observable<any> {
+    return this.http.put(`${this.webApi}${this.api}/${servicio.id}`, servicio,)
   }
 }

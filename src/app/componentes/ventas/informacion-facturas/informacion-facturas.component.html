@@ -211,16 +211,8 @@
   <div class="invoice-footer" *ngIf="tieneProductos">
     <div class="summary-section">
       <div class="summary-row">
-        <span class="summary-label">Subtotal:</span>
-        <span class="summary-amount">{{ subtotal | currency:'COP':'symbol':'1.0-0' }}</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">IVA (19%):</span>
-        <span class="summary-amount">{{ iva | currency:'COP':'symbol':'1.0-0' }}</span>
-      </div>
-      <div class="summary-row total-row">
         <span class="summary-label">Total:</span>
-        <span class="summary-amount total-final">{{ totalFactura | currency:'COP':'symbol':'1.0-0' }}</span>
+        <span class="summary-amount">{{ subtotal | currency:'COP':'symbol':'1.0-0' }}</span>
       </div>
     </div>
   </div>

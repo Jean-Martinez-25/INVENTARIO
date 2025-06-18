@@ -361,7 +361,7 @@ export class ResumenProductosComponent implements OnInit {
   private formatCurrency(value: number): string {
     return new Intl.NumberFormat('es-ES', {
       style: 'currency',
-      currency: 'EUR' // Cambia por tu moneda
+      currency: 'COP' // Cambia por tu moneda
     }).format(value);
   }
 

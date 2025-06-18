@@ -37,7 +37,10 @@ export class MenuComponent {
       expanded: false,
       subItems: [
         { label: 'Facturas', route: '/ventas/listado-venta-diario' },
-        { label: 'Registrar', route: '/ventas/agregar-venta' }
+        { label: 'Registrar', route: '/ventas/agregar-venta' },
+        {label: 'Servicios', route: '/ventas/agregar-servicio'  },
+        {label: 'Listado Servicios', route: '/ventas/listado-servicios'  },
+        {label: 'Agenda Servicios', route: '/ventas/agenda-servicios'  }
       ]
     },
     {

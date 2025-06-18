@@ -59,6 +59,30 @@
                   [ngClass]="{'p-invalid': campoInvalido('correo')}" />
                 <small *ngIf="campoInvalido('correo')" class="error-text">Correo inválido</small>
               </div>
+              <!-- Teléfono -->
+              <div class="input-group">
+                <label for="telefono">
+                  <i class="pi pi-phone"></i>
+                  Teléfono
+                </label>
+                <input pInputText id="telefono" formControlName="telefono" placeholder="Número de contacto"
+                  [ngClass]="{'p-invalid': campoInvalido('telefono')}" />
+                <small *ngIf="campoInvalido('telefono')" class="error-text">Campo requerido</small>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <!-- Dirección -->
+              <div class="input-group full-width">
+                <label for="direccion">
+                  <i class="pi pi-map-marker"></i>
+                  Dirección
+                </label>
+                <input pInputText id="direccion" formControlName="direccion"
+                  placeholder="Dirección completa del proveedor"
+                  [ngClass]="{'p-invalid': campoInvalido('direccion')}" />
+                <small *ngIf="campoInvalido('direccion')" class="error-text">Campo requerido</small>
+              </div>
             </div>
 
             <!-- Botón de envío -->
@@ -87,7 +111,9 @@
               <tr>
                 <th><i class="pi pi-user"></i> Nombre</th>
                 <th><i class="pi pi-id-card"></i> Documento</th>
+                <th><i class="pi pi-phone"></i> Teléfono</th>
                 <th><i class="pi pi-envelope"></i> Correo</th>
+                <th><i class="pi pi-map-marker"></i> Dirección</th>
                 <th><i class="pi pi-cog"></i> Acciones</th>
               </tr>
             </ng-template>
@@ -96,7 +122,9 @@
               <tr>
                 <td>{{ cliente.nombre }}</td>
                 <td>{{ cliente.documento }}</td>
+                <td>{{ cliente.telefono }}</td>
                 <td>{{ cliente.correo }}</td>
+                <td>{{ cliente.direccion }}</td>
                 <td class="actions-col">
                   <button pButton icon="pi pi-pencil" class="edit-btn" (click)="editarCliente(cliente, i)">
                   </button>

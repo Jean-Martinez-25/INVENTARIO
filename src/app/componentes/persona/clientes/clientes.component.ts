@@ -24,7 +24,9 @@ export class ClientesComponent implements OnInit {
     this.clienteForm = this.fb.group({
       nombre: ['', Validators.required],
       documento: ['', Validators.required],
+      telefono: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
+      direccion: ['', Validators.required],
     });
   }
 

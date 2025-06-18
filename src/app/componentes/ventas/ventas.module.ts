@@ -1,3 +1,4 @@
+import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { NgModule } from '@angular/core';
@@ -31,7 +32,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MatOptionModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { TimelineModule } from 'primeng/timeline';
+import { MatTabsModule } from '@angular/material/tabs';
 // Services
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
@@ -42,13 +45,20 @@ import { ListadoComprasComponent } from './listado-compras/listado-compras.compo
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { BadgeModule } from 'primeng/badge';
 import { TagModule } from 'primeng/tag';
+import { RegistrarServicioComponent } from './registrar-servicio/registrar-servicio.component';
+import { ListadoServiciosComponent } from './listado-servicios/listado-servicios.component';
+import { AgendaServiciosComponent } from './agenda-servicios/agenda-servicios.component';
+
 @NgModule({
   declarations: [
     FiltroVentasListadoComponent,
     ListadoVentasComponent,
     RegistrarVentasComponent,
+    RegistrarServicioComponent,
     InformacionFacturasComponent,
-    ListadoComprasComponent
+    ListadoComprasComponent,
+    ListadoServiciosComponent,
+    AgendaServiciosComponent
   ],
   imports: [
     // Angular Core
@@ -86,7 +96,12 @@ import { TagModule } from 'primeng/tag';
     TooltipModule,
     ProgressSpinnerModule,
     BadgeModule,
-    TagModule
+    TagModule,
+    CalendarModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    TimelineModule,
+    MatTabsModule
   ],
   providers: [
     DialogService,
