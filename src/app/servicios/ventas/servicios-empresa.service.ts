@@ -18,10 +18,10 @@ export class ServiciosEmpresaService {
     return this.http.get<ServiciosViewModel[]>(`${this.webApi}${this.api}/listado-servicios-actuales`);
   }
 
-  // Crear nuevo servicio
-  crearServicio(servicio: Omit<ServiciosViewModel, 'id'>): Observable<any> {
-    return this.http.post(`${this.webApi}${this.api}/crear`, servicio);
-  }
+  crearServicio(servicio: any): Observable<ServiciosViewModel> {
+  return this.http.post<ServiciosViewModel>(`${this.webApi}${this.api}/crear`, servicio);
+}
+
 
   // Actualizar servicio existente
   actualizarServicio(servicio: ServiciosViewModel): Observable<any> {

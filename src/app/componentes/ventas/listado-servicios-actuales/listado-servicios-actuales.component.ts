@@ -34,7 +34,10 @@ export class ListadoServiciosActualesComponent implements OnInit {
 
   loadServicios(): void {
     this.servicioService.obtenerServicios().subscribe({
-      next: (data) => this.servicios = data,
+      next: (data) => {
+        this.servicios = [...data]; // Nueva referencia para forzar renderizado
+        this.closeForm();
+      },  
       error: (err) => console.error('Error al obtener servicios:', err)
     });
   }
@@ -76,7 +79,7 @@ export class ListadoServiciosActualesComponent implements OnInit {
 
       this.servicioService.actualizarServicio(updatedServicio).subscribe({
         next: () => {
-          this.loadServiciosAndCloseForm();
+          this.loadServicios();
         },
         error: (err) => console.error('Error al actualizar servicio:', err)
       });

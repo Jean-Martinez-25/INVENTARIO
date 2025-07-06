@@ -140,6 +140,7 @@ export class EdicionComponent implements OnInit {
 
         this.displayDialog = false;
         this.currentItem = { id: 0, nombre: '' };
+        this.loadData();
       },
       error: () => {
         this.messageService.add({
@@ -149,7 +150,6 @@ export class EdicionComponent implements OnInit {
         });
       }
     });
-    this.loadData();
   }
 
   cancelEdit() {

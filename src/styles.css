@@ -82,8 +82,9 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 /* styles.css */
 .table{
-  background-color: #BCC8D5;
+  background-color: #c4c6ee;
   min-height: 95%;
+  padding-top: 3%;
 }
 .content{
   margin-left: auto;

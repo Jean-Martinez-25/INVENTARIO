@@ -41,7 +41,7 @@ export class EdicionService {
   }
 
   addEmpleado(item: TableItem): Observable<TableItem> {
-    return this.http.post<TableItem>(`${this.baseUrl}/empleados`, item);
+    return this.http.post<TableItem>(`${this.baseUrl}/add-empleados`, item);
   }
 
   updateEmpleado(id: number, item: TableItem): Observable<TableItem> {
