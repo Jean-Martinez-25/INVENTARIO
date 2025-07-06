@@ -31,3 +31,11 @@ export interface SimpleViewModel{
     id: number,
     nombre: string
 }
+
+export interface ServiciosViewModel {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  estado: boolean;
+}

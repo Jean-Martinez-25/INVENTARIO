@@ -1,0 +1,111 @@
+<div class="table">
+    <div class="content">
+        <!-- table-management.component.html -->
+        <div class="table-management-container">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>Gestión de Tablas Maestras</mat-card-title>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <!-- Selector de Tabla -->
+                    <div class="table-selector">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Seleccionar Tabla</mat-label>
+                            <mat-select [(value)]="selectedTable" (selectionChange)="onTableChange($event)">
+                                <mat-option value="secciones">Secciones</mat-option>
+                                <mat-option value="empleados">Empleados</mat-option>
+                                <mat-option value="marcas">Marcas</mat-option>
+                                <mat-option value="medidas">Medidas</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Botón Agregar -->
+                    <div class="action-buttons">
+                        <button mat-raised-button color="primary" (click)="addNew()">
+                            <mat-icon>add</mat-icon>
+                            Agregar {{ getCurrentTable().displayName }}
+                        </button>
+                    </div>
+
+                    <!-- Tabla de Datos -->
+                    <div class="data-table">
+                        <p-table [value]="getCurrentTable().data" [paginator]="true" [rows]="10"
+                            [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+                            [rowsPerPageOptions]="[10, 25, 50]" styleClass="p-datatable-striped">
+
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th *ngFor="let col of getCurrentTable().columns">
+                                        {{ col | titlecase }}
+                                    </th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td *ngFor="let col of getCurrentTable().columns">
+                                        {{ item[col] }}
+                                    </td>
+                                    <td>
+                                        <button mat-icon-button color="primary" (click)="editItem(item)"
+                                            matTooltip="Editar">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Dialog para Agregar/Editar -->
+            <p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="true"
+                [header]="isEditing ? 'Editar ' + getCurrentTable().displayName : 'Agregar ' + getCurrentTable().displayName"
+                [style]="{width: '450px'}">
+
+                <div class="dialog-content">
+                    <form>
+                        <!-- Campo Nombre (común para todas las tablas) -->
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Nombre</mat-label>
+                            <input matInput [(ngModel)]="currentItem.nombre" name="nombre" required>
+                        </mat-form-field>
+
+                        <!-- Campo Documento (solo para Empleados) -->
+                        <mat-form-field *ngIf="selectedTable === 'empleados'" appearance="outline" class="full-width">
+                            <mat-label>Documento</mat-label>
+                            <input matInput [(ngModel)]="currentItem.documento" name="documento">
+                        </mat-form-field>
+
+                        <!-- Campo Estado (solo para Empleados) -->
+                        <mat-form-field *ngIf="selectedTable === 'empleados'" appearance="outline" class="full-width">
+                            <mat-label>Estado</mat-label>
+                            <mat-select [(ngModel)]="currentItem.estado" name="estado">
+                                <mat-option value="Activo">Activo</mat-option>
+                                <mat-option value="Inactivo">Inactivo</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                    </form>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class="dialog-buttons">
+                        <button mat-button (click)="cancelEdit()">Cancelar</button>
+                        <button mat-raised-button color="primary" (click)="saveItem()">
+                            {{ isEditing ? 'Actualizar' : 'Guardar' }}
+                        </button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <!-- Toast Messages -->
+            <p-toast></p-toast>
+        </div>
+    </div>
+</div>

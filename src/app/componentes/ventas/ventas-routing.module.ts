@@ -7,6 +7,7 @@ import { MenuComponent } from '../menu/menu.component';
 import { RegistrarServicioComponent } from './registrar-servicio/registrar-servicio.component';
 import { ListadoServiciosComponent } from './listado-servicios/listado-servicios.component';
 import { AgendaServiciosComponent } from './agenda-servicios/agenda-servicios.component';
+import { ListadoServiciosActualesComponent } from './listado-servicios-actuales/listado-servicios-actuales.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       {path: 'agregar-servicio', component: RegistrarServicioComponent},
       {path: 'listado-venta-diario', component: ListadoVentasComponent},
       {path: 'listado-servicios', component: ListadoServiciosComponent},
+      {path: 'listado-servicios-actuales', component: ListadoServiciosActualesComponent},
       {path: 'agenda-servicios', component: AgendaServiciosComponent}
     ]
   }

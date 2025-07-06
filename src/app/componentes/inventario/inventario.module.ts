@@ -32,13 +32,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { EditarProductoAuditoriaComponent } from './editar-producto-auditoria/editar-producto-auditoria.component';
 import { MatIconModule } from '@angular/material/icon';
+import { EdicionComponent } from './edicion/edicion.component';
 @NgModule({
   declarations: [
     ListadoInventarioComponent,
     CrearEditarProductosComponent,
     RegistrarComprasInventarioComponent,
     InformacionProductoComponent,
-    EditarProductoAuditoriaComponent
+    EditarProductoAuditoriaComponent,
+    EdicionComponent
   ],
   imports: [
     CommonModule,

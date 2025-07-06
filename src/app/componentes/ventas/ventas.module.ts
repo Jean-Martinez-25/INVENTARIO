@@ -48,6 +48,7 @@ import { TagModule } from 'primeng/tag';
 import { RegistrarServicioComponent } from './registrar-servicio/registrar-servicio.component';
 import { ListadoServiciosComponent } from './listado-servicios/listado-servicios.component';
 import { AgendaServiciosComponent } from './agenda-servicios/agenda-servicios.component';
+import { ListadoServiciosActualesComponent } from './listado-servicios-actuales/listado-servicios-actuales.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { AgendaServiciosComponent } from './agenda-servicios/agenda-servicios.co
     InformacionFacturasComponent,
     ListadoComprasComponent,
     ListadoServiciosComponent,
-    AgendaServiciosComponent
+    AgendaServiciosComponent,
+    ListadoServiciosActualesComponent
   ],
   imports: [
     // Angular Core

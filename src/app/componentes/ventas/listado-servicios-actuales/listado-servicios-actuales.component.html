@@ -1,0 +1,177 @@
+<div class="table">
+    <div class="content">
+        <div class="servicios-container">
+            <!-- Header -->
+            <div class="header-card">
+                <div class="header-content">
+                    <div class="header-info">
+                        <h1 class="header-title">
+                            <i class="fas fa-cogs"></i>
+                            Gestión de Servicios
+                        </h1>
+                        <p class="header-subtitle">
+                            Administra y mantén actualizada la información de tus servicios
+                        </p>
+                    </div>
+                    <button class="btn btn-primary" (click)="openNewServiceForm()">
+                        <i class="fas fa-plus"></i>
+                        Nuevo Servicio
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formulario Modal -->
+            <div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
+                <div class="modal-content" (click)="$event.stopPropagation()">
+                    <div class="modal-header">
+                        <h2 class="modal-title">
+                            <i class="fas fa-plus-circle"></i>
+                            {{ isEditing ? 'Editar Servicio' : 'Nuevo Servicio' }}
+                        </h2>
+                        <button class="btn-close" (click)="closeForm()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <form [formGroup]="servicioForm" (ngSubmit)="saveService()" class="modal-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nombre">
+                                    <i class="fas fa-tag"></i>
+                                    Nombre del Servicio
+                                </label>
+                                <input type="text" id="nombre" formControlName="nombre" class="form-control"
+                                    placeholder="Ingrese el nombre del servicio"
+                                    [class.error]="nombre?.invalid && nombre?.touched">
+                                <div class="error-message" *ngIf="nombre?.invalid && nombre?.touched">
+                                    <span *ngIf="nombre?.errors?.['required']">El nombre es requerido</span>
+                                    <span *ngIf="nombre?.errors?.['minlength']">El nombre debe tener al menos 3
+                                        caracteres</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="descripcion">
+                                    <i class="fas fa-align-left"></i>
+                                    Descripción
+                                </label>
+                                <textarea id="descripcion" formControlName="descripcion" class="form-control"
+                                    placeholder="Describe detalladamente el servicio" rows="4"
+                                    [class.error]="descripcion?.invalid && descripcion?.touched">
+            </textarea>
+                                <div class="error-message" *ngIf="descripcion?.invalid && descripcion?.touched">
+                                    <span *ngIf="descripcion?.errors?.['required']">La descripción es requerida</span>
+                                    <span *ngIf="descripcion?.errors?.['minlength']">La descripción debe tener al menos
+                                        10 caracteres</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="precio">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    Precio (COP)
+                                </label>
+                                <input type="number" id="precio" formControlName="precio" class="form-control"
+                                    placeholder="0" min="0" [class.error]="precio?.invalid && precio?.touched">
+                                <div class="error-message" *ngIf="precio?.invalid && precio?.touched">
+                                    <span *ngIf="precio?.errors?.['required']">El precio es requerido</span>
+                                    <span *ngIf="precio?.errors?.['min']">El precio debe ser mayor a 0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" formControlName="estado" class="checkbox-input">
+                                    <span class="checkbox-custom"></span>
+                                    Servicio Activo
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="closeForm()">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary" [disabled]="servicioForm.invalid">
+                                <i class="fas fa-save"></i>
+                                {{ isEditing ? 'Actualizar' : 'Guardar' }} Servicio
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de Servicios -->
+            <div class="services-card">
+                <div class="services-header">
+                    <h2 class="services-title">
+                        <i class="fas fa-list"></i>
+                        Servicios Registrados
+                    </h2>
+                    <p class="services-subtitle">
+                        Lista completa de servicios disponibles
+                    </p>
+                    <div class="services-count">
+                        {{ servicios.length }} servicios
+                    </div>
+                </div>
+
+                <div class="services-grid">
+                    <div class="service-card" *ngFor="let servicio of servicios" [class.inactive]="!servicio.estado">
+
+                        <div class="service-header">
+                            <div class="service-status">
+                                <span class="status-badge" [class.active]="servicio.estado"
+                                    [class.inactive]="!servicio.estado">
+                                    <i class="fas" [class.fa-eye]="servicio.estado"
+                                        [class.fa-eye-slash]="!servicio.estado"></i>
+                                    {{ servicio.estado ? 'Activo' : 'Inactivo' }}
+                                </span>
+                            </div>
+                            <div class="service-actions">
+                                <button class="btn-action btn-edit" (click)="openEditServiceForm(servicio)"
+                                    title="Editar servicio">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-action btn-toggle" (click)="toggleServiceStatus(servicio.id)"
+                                    [title]="servicio.estado ? 'Desactivar servicio' : 'Activar servicio'">
+                                    <i class="fas" [class.fa-eye-slash]="servicio.estado"
+                                        [class.fa-eye]="!servicio.estado"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="service-content">
+                            <h3 class="service-name">{{ servicio.nombre }}</h3>
+                            <p class="service-description">{{ servicio.descripcion }}</p>
+                            <div class="service-price">
+                                {{ formatPrice(servicio.precio) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado vacío -->
+                <div class="empty-state" *ngIf="servicios.length === 0">
+                    <div class="empty-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="empty-title">No hay servicios registrados</h3>
+                    <p class="empty-message">
+                        Comienza agregando tu primer servicio para gestionar tu catálogo
+                    </p>
+                    <button class="btn btn-primary" (click)="openNewServiceForm()">
+                        <i class="fas fa-plus"></i>
+                        Agregar Primer Servicio
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

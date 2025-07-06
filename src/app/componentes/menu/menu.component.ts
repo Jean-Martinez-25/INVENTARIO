@@ -40,6 +40,7 @@ export class MenuComponent {
         { label: 'Registrar', route: '/ventas/agregar-venta' },
         {label: 'Servicios', route: '/ventas/agregar-servicio'  },
         {label: 'Listado Servicios', route: '/ventas/listado-servicios'  },
+        {label: 'Listado Servicios Actuales', route: '/ventas/listado-servicios-actuales'  },
         {label: 'Agenda Servicios', route: '/ventas/agenda-servicios'  }
       ]
     },
@@ -49,7 +50,8 @@ export class MenuComponent {
       expanded: false,
       subItems: [
         { label: 'Productos', route: '/inventario/listado-inventario' },
-        { label: 'Compras', route: '/inventario/registrar-compra' }
+        { label: 'Compras', route: '/inventario/registrar-compra' },
+        { label: 'Edicion', route: '/inventario/edicion' }
       ]
     },
     {
